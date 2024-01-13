@@ -26,7 +26,7 @@ class UIManager {
       if (element instanceof Button) {
         Button button = (Button) element;
         if (button.isHovered()) {
-          button.callback.accept(0);
+          button.callback.accept(button.callbackValue);
           return;
         }
       }
@@ -43,8 +43,9 @@ interface UIElement {
 class Button implements UIElement {
   protected int x, y, width, height;
   protected Consumer<Integer> callback;
+  protected int callbackValue;
 
-  Button(int x, int y, int width, int height, Consumer<Integer> callback) {
+  Button(int x, int y, int width, int height, Consumer<Integer> callback, int callbackValue) {
     this.x = x;
     this.y = y;
     this.width = width;
@@ -65,8 +66,8 @@ class TextButton extends Button {
   private String text;
   private color buttonColor;
 
-  TextButton(int x, int y, int width, int height, color buttonColor, String text, Consumer<Integer> callback) {
-    super(x, y, width, height, callback);
+  TextButton(int x, int y, int width, int height, color buttonColor, String text, Consumer<Integer> callback, int callbackValue) {
+    super(x, y, width, height, callback, callbackValue);
     this.buttonColor = buttonColor;
     this.text = text;
   }
@@ -90,8 +91,8 @@ class TextButton extends Button {
 class ImgButton extends Button {
   private PImage image, imageHover, imagePressed;
 
-  ImgButton(int x, int y, int width, int height, PImage image, PImage imageHover, PImage imagePressed, Consumer<Integer> callback) {
-    super(x, y, width, height, callback);
+  ImgButton(int x, int y, int width, int height, PImage image, PImage imageHover, PImage imagePressed, Consumer<Integer> callback, int callbackValue) {
+    super(x, y, width, height, callback, callbackValue);
     this.image = image;
     this.imageHover = imageHover;
     this.imagePressed = imagePressed;
