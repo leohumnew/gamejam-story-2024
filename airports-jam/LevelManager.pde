@@ -16,6 +16,7 @@ class LevelManager {
     this.foregroundItemPositions = foregroundItemPositions;
   }
 
+  // Rendering
   public void render(int posX) {
     this.posX = posX;
     background(#73CEF7);

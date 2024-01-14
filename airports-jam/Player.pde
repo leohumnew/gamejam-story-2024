@@ -9,6 +9,7 @@ class Player {
     this.images = images;
   }
 
+  // Inputs
   void keyPress() {
     if (key == 'a' || keyCode == LEFT) speedX = 20;
     else if (key == 'd' || keyCode == RIGHT) speedX = -20;
@@ -19,15 +20,17 @@ class Player {
     else if (key == 'd' || keyCode == RIGHT) speedX = 0;
   }
 
+  // Interactions
   void setActiveBubble(int activeBubble) {
     this.activeBubble = activeBubble;
   }
 
+  // Position update
   int update() {
     posX += speedX / frameRate * 10;
     return (int)posX;
   }
-
+  // Rendering, depending on speed, direction, and animation step
   void render() {
     if(speedX == 0) {
       if(effects[0].isPlaying()) effects[0].stop();
@@ -57,5 +60,7 @@ class Player {
         facingRight = true;
       }
     }
+
+    // TODO: Render bubble
   }
 }
