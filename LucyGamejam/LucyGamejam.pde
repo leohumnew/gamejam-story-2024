@@ -1,4 +1,5 @@
 import processing.sound.*;
+final int S = 8, FS = 10;
 
 // GENERAL / MENU VARIABLES //
 int stage = -1; // -2 = Settings, -1 = Loading, 0 = Menu, 1 = Game
@@ -6,12 +7,12 @@ FadeManager fadeManager = new FadeManager(1500);
 UIManager menuUI = new UIManager();
 UIManager debugUI = new UIManager();
 PImage loading;
-PImage ui[], interactionBubbles[], characters[];
+PImage ui[], interactionBubbles[], bird[];
 PImage[][] mainLevelLayers = new PImage[1][3];
 PImage[][] levelItems = new PImage[1][];
 PImage[][] levelForegroundItems = new PImage[1][];
-int[][][] itemPositions = {{{1500}, {450, 0, -700, -1600, -3900}}};
-int[][][] foregroundItemPositions = {{{800, -200, -3200}}};
+int[][][] itemPositions = {{{1450, -900, -1900, -3900},{0},{-1},{2800},{1500},{-1},{-2000},{-1},{-4000},{-5500},{-8000},{-1},{-10000}}};
+int[][][] foregroundItemPositions = {{{800, -3200}}};
 SoundFile effects[];
 
 // GAME VARIABLES //
@@ -22,7 +23,7 @@ Player player;
 void settings() {
   SaveManager.loadSave(this);
   if(SaveManager.getSetting("FULLSCREEN") == 1) fullScreen(P2D);
-  else size(1280, 720, P2D);
+  else size(1920, 1080, P2D);
 }
 
 void setup(){
@@ -65,7 +66,8 @@ void drawGame(int level){
 // CHANGE STAGE //
 Consumer<Integer> changeStage = i -> {
   if(i > 0) {
-    activeLevel = new LevelManager(i, mainLevelLayers[i-1], levelItems[i-1], itemPositions[i-1], levelForegroundItems[i-1], foregroundItemPositions[i-1]);
+    NPC[] npcs = {new NPC(bird, -width - 100, 100, true, -15)};
+    activeLevel = new LevelManager(i, mainLevelLayers[i-1], levelItems[i-1], itemPositions[i-1], levelForegroundItems[i-1], foregroundItemPositions[i-1], npcs);
   }
   stage = i;
 };
@@ -90,17 +92,17 @@ void keyReleased() {
 void loadAssets(){
   //ui = new PImage[8];
   interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 256, 32, 8, 1);
-  mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 1920, 232);
+  mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 240, 29);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 2880, 502);
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 2880, 804);
-  levelItems[0] = new PImage[2];
-  levelItems[0][0] = Utilities.loadImagePng(this, "Char1.png", 200, 200);
-  levelItems[0][1] = Utilities.loadImagePng(this, "tree.png", 357, 507);
-  levelForegroundItems[0] = new PImage[1];
-  levelForegroundItems[0][0] = Utilities.loadImagePng(this, "tree.png", 476, 676);
+  levelItems[0] = new PImage[13];
+  levelItems[0][0] = Utilities.loadImagePng(this, "tree.png", 59, 84);
+  arrayCopy(Utilities.loadImagePng(this, "HousesSpriteSheet.png", 480, 327, 4, 3), 0, levelItems[0], 1, 12);
 
-  characters = new PImage[1];
-  characters[0] = Utilities.loadImagePng(this, "bird.png", 160, 108); // Bird
+  levelForegroundItems[0] = new PImage[1];
+  levelForegroundItems[0][0] = levelItems[0][0];
+
+  bird = Utilities.loadImagePng(this, "bird.png", 72, 21, 4, 1);
 
   // Prepare sound effects
   effects = new SoundFile[1];
@@ -108,7 +110,7 @@ void loadAssets(){
   effects[0].rate(2);
 
   // Prepare player
-  player = new Player(Utilities.loadImagePng(this, "PlayerSpriteSheet.png", 160, 48, 5, 1));
+  player = new Player(Utilities.loadImagePng(this, "PlayerSpriteSheet.png", 256, 48, 8, 1));
 
   // Make menu UI
   menuUI.add(new ImgButton(width/2, height/2, 300, 100, Utilities.loadImagePng(this, "PlayButton.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonHover.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonPush.png", 300, 100), fadeStage, 1));

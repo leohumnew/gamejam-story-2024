@@ -4,9 +4,12 @@ class Player {
   private PImage[] images;
   private int lastTime = 0, activeImg = 0, activeBubble = -1;
   private boolean facingRight = true;
+  private int playerWidth, playerHeight;
 
   Player(PImage[] images) {
     this.images = images;
+    playerWidth = images[0].width*S;
+    playerHeight = images[0].height*S;
   }
 
   // Inputs
@@ -34,29 +37,30 @@ class Player {
   void render() {
     if(speedX == 0) {
       if(effects[0].isPlaying()) effects[0].stop();
-      if(facingRight) image(images[4], width / 2 - 80, height - 350, 160, 240);
+
+      if(facingRight) image(images[4], width / 2 - playerWidth/2, height - playerHeight*1.3, playerWidth, playerHeight);
       else {
         pushMatrix();
         scale(-1, 1);
-        image(images[4], -(width / 2 + 70), height - 350, 160, 240);
+        image(images[4], -(width / 2 + playerWidth/2 - 10), height - playerHeight*1.3, playerWidth, playerHeight);
         popMatrix();
       }
     }
     else {
       if(!effects[0].isPlaying()) effects[0].loop();
-      if(millis() > lastTime + 250) {
+      if(millis() > lastTime + 300) {
         activeImg = (activeImg + 1) % 4;
         lastTime = millis();
       }
       if(speedX > 0) {
         pushMatrix();
         scale(-1, 1);
-        image(images[activeImg], -(width / 2 + 70), height - 350, 160, 240);
+        image(images[activeImg], -(width / 2 + playerWidth/2 - 10), height - playerHeight*1.3, playerWidth, playerHeight);
         popMatrix();
         facingRight = false;
       }
       else {
-        image(images[activeImg], width / 2 - 80, height - 350, 160, 240);
+        image(images[activeImg], width / 2 - playerWidth/2, height - playerHeight*1.3, playerWidth, playerHeight);
         facingRight = true;
       }
     }

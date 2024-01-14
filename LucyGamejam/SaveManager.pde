@@ -4,8 +4,7 @@ static class SaveManager {
 
   private static byte[] createSave() {
     return new byte[] {
-      0x01, // Fullscreen: 0 = false, 1 = true
-      0x00 // Language: 0 = English, 1 = Spanish
+      0x00, // Fullscreen: 0 = false, 1 = true
     };
   }
 
