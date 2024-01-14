@@ -12,15 +12,15 @@ PImage[][] mainLevelLayers = new PImage[1][3];
 PImage[][] levelItems = new PImage[1][];
 PImage[][] levelForegroundItems = new PImage[1][];
 // 0 = Village, 1 = Forest, 2 = School, 3 = Home
-// 0 = Tree, 1-3 = MC Houses, 4-12 = Houses, 13-14 = Bushes, 15-17 = Big trees, 18-20 = Trees
+// 0 = Highschool, 1-3 = MC Houses, 4-12 = Houses, 13-14 = Bushes, 15-17 = Big trees, 18-20 = Trees
 int[][][] itemPositions = {{
   {1375},
   {45},{-1},{-1},
-  {400},{-1},{200},{1100},{-275},{1225},{800},{-150},{925},
-  {175},{600},
+  {400},{-1},{200},{1100},{-275},{1225},{800, 1600},{-150},{925},
+  {175},{600, 1050},
   {300},{-1},{-1},
   {0},{550},{750}}}; 
-int[][][] foregroundItemPositions = {{{800},{100}}};
+int[][][] foregroundItemPositions = {{{800},{-100}}};
 //Interactable[][] interactables = {{}};
 SoundFile effects[];
 
