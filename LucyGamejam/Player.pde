@@ -61,6 +61,6 @@ class Player {
       }
     }
 
-    // TODO: Render bubble
+    if(activeBubble != -1) image(interactionBubbles[activeBubble], width / 2 - 30, height - 400, width / 24, width / 24);
   }
 }
