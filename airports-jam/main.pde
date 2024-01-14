@@ -6,6 +6,7 @@ FadeManager fadeManager = new FadeManager(1500);
 UIManager menuUI = new UIManager();
 UIManager debugUI = new UIManager();
 PImage loading;
+PImage ui[], interactionBubbles[];
 PImage[][] mainLevelLayers = new PImage[1][3];
 PImage[][] levelItems = new PImage[1][];
 PImage[][] levelForegroundItems = new PImage[1][];
@@ -87,6 +88,8 @@ void keyReleased() {
 
 // LOAD ASSETS //
 void loadAssets(){
+  //ui = new PImage[8];
+  interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 256, 32, 4, 1);
   mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 1920, 232);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 2880, 502);
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 2880, 804);

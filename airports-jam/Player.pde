@@ -2,7 +2,7 @@ class Player {
   private float posX = 0;
   private int speedX = 0;
   private PImage[] images;
-  private int lastTime = 0, activeImg = 0;
+  private int lastTime = 0, activeImg = 0, activeBubble = -1;
   private boolean facingRight = true;
 
   Player(PImage[] images) {
@@ -17,6 +17,10 @@ class Player {
   void keyRelease() {
     if (key == 'a' || keyCode == LEFT) speedX = 0;
     else if (key == 'd' || keyCode == RIGHT) speedX = 0;
+  }
+
+  void setActiveBubble(int activeBubble) {
+    this.activeBubble = activeBubble;
   }
 
   int update() {
