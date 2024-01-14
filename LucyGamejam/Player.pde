@@ -38,15 +38,14 @@ class Player {
     if(speedX == 0) {
       if(effects[0].isPlaying()) effects[0].stop();
 
-      if(!facingRight) image(images[4], width / 2 - playerWidth/2, height - playerHeight*1.3, playerWidth, playerHeight);
+      if(facingRight) image(images[4], width / 2 - playerWidth/2, height - playerHeight*1.3, playerWidth, playerHeight);
       else {
         pushMatrix();
         scale(-1, 1);
         image(images[4], -(width / 2 + playerWidth/2 - 10), height - playerHeight*1.3, playerWidth, playerHeight);
         popMatrix();
       }
-    }
-    else {
+    } else {
       if(!effects[0].isPlaying()) effects[0].loop();
       if(millis() > lastTime + 300) {
         activeImg = (activeImg + 1) % 4;
@@ -55,8 +54,7 @@ class Player {
       if(speedX > 0) {
         image(images[activeImg], width / 2 - playerWidth/2, height - playerHeight*1.3, playerWidth, playerHeight);
         facingRight = true;
-      }
-      else {
+      } else {
         pushMatrix();
         scale(-1, 1);
         image(images[activeImg], -(width / 2 + playerWidth/2 - 10), height - playerHeight*1.3, playerWidth, playerHeight);
