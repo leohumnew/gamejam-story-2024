@@ -4,10 +4,16 @@ import processing.sound.*;
 int stage = -1; // -2 = Settings, -1 = Loading, 0 = Menu, 1 = Game
 FadeManager fadeManager = new FadeManager(1500);
 UIManager menuUI = new UIManager();
+UIManager debugUI = new UIManager();
 PImage loading;
+PImage[][] mainLevelLayers = new PImage[1][3];
+PImage[][] levelItems = new PImage[1][];
+PImage[] trees = new PImage[1];
+int[][] itemPositions = {{300}};
 
 // GAME VARIABLES //
 LevelManager activeLevel;
+Player player;
 
 // MAIN FUNCTIONS //
 void settings() {
@@ -18,8 +24,8 @@ void settings() {
 
 void setup(){
   surface.setTitle("Airports");
-  // ((PGraphicsOpenGL)g).textureSampling(2);
-  frameRate(60);
+  ((PGraphicsOpenGL)g).textureSampling(2);
+  frameRate(75);
   background(0);
 
   // Load screen while loading assets
@@ -28,13 +34,13 @@ void setup(){
 }
 
 void draw(){
-  background(0);
   if (stage == -2) drawSettings(); // Settings
   else if (stage == -1) image(loading, 0, 0, width, height); // Loading screen
   else if (stage == 0) drawMenu(); // Main menu
   else if (stage == 1) drawGame(1); // Game
 
   fadeManager.update(); // Update fade
+  debugUI.render();
 }
 
 // DRAW FUNCTIONS //
@@ -43,34 +49,55 @@ void drawSettings(){
 }
 
 void drawMenu(){
+  background(0);
   menuUI.render();
 }
 
 void drawGame(int level){
-  activeLevel.render();
+  activeLevel.render(player.update());
+  player.render();
 }
 
 // LOAD ASSETS //
 void loadAssets(){
   // new SoundFile(this, "sound.wav");
-  delay(1000);
+  mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 1920, 232);
+  mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 2880, 502);
+  mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 2880, 804);
+  levelItems[0] = new PImage[1];
+  levelItems[0][0] = Utilities.loadImagePng(this, "Char1.png", 200, 200);
+  trees[0] = Utilities.loadImagePng(this, "tree.png", 476, 676);
+
+  // Prepare player
+  player = new Player(Utilities.loadImagePng(this, "PlayerSpriteSheet.png", 160, 48, 5, 1));
 
   // Make menu UI
   menuUI.add(new ImgButton(width/2, height/2, 300, 100, Utilities.loadImagePng(this, "PlayButton.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonHover.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonPush.png", 300, 100), fadeStage, 1));
+  debugUI.add(new FPSCounter(100,100));
 
   fadeStage.accept(0);
 }
 
 // CHANGE STAGE //
-Consumer<Integer> fadeStage = i -> fadeManager.fade(changeStage, i);
 Consumer<Integer> changeStage = i -> {
   if(i > 0) {
-    activeLevel = new LevelManager(stage);
+    activeLevel = new LevelManager(i, mainLevelLayers[i-1], levelItems[i-1], itemPositions[i-1], trees);
   }
   stage = i;
+};
+Consumer<Integer> fadeStage = i -> {
+  fadeManager.fade(changeStage, i);
 };
 
 // INPUT //
 void mouseClicked() {
   if (stage == 0) menuUI.mouseClicked();
+}
+
+void keyPressed() {
+  if (stage >= 0) player.keyPress();
+}
+
+void keyReleased() {
+  if (stage >= 0) player.keyRelease();
 }

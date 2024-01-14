@@ -51,6 +51,7 @@ class Button implements UIElement {
     this.width = width;
     this.height = height;
     this.callback = callback;
+    this.callbackValue = callbackValue;
   }
 
   public void render() {
@@ -136,6 +137,8 @@ class FPSCounter implements UIElement {
   }
 
   public void render() {
+    fill(0);
+    rect(x-40, y-15, 80, 30);
     fill(255);
     // FPS, rounded to 0 decimal places
     text("FPS: " + Math.round(frameRate), x, y);

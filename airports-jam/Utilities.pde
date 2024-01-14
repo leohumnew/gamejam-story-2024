@@ -24,6 +24,7 @@ static class Utilities {
     return retval;
   }
   // Different overloads for loadImagePng
+  static PImage[] loadImagePng(PApplet sketch, String inFile, int w, int h, int xNum, int yNum) { return loadImagePngCpyPx(sketch, inFile, w, h, xNum, yNum); }
   static PImage[] loadImagePng(PApplet sketch, String inFile, int size, int xNum, int yNum) { return loadImagePngCpyPx(sketch, inFile, size, size, xNum, yNum); }
   static PImage loadImagePng(PApplet sketch, String inFile, int w, int h) { return loadImagePngCpyPx(sketch, inFile, w, h, 1, 1)[0]; }
   static PImage loadImagePng(PApplet sketch, String inFile, int size) { return loadImagePngCpyPx(sketch, inFile, size, size, 1, 1)[0]; }
