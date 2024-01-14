@@ -19,10 +19,11 @@ int[][][] itemPositions = {{
   {45},{-1},{-1},
   {400},{-1},{200},{1100},{-275},{1225},{800, 1600},{-150},{925},
   {175},{600, 1050},
-  {300},{-1},{-1},
+  {300},{1700},{-1},
   {0},{550},{750},
   {1449},{113}}}; 
-int[][][] foregroundItemPositions = {{{800},{-100}}};
+  // 0 = Trees, 1 = Bushes
+int[][][] foregroundItemPositions = {{{800},{-100, 1380}}};
 HashMap<Integer, Interactable>[] interactables = new HashMap[1];
 SoundFile effects[];
 
