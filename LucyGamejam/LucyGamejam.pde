@@ -11,13 +11,17 @@ PImage ui[], interactionBubbles[], bird[];
 PImage[][] mainLevelLayers = new PImage[1][3];
 PImage[][] levelItems = new PImage[1][];
 PImage[][] levelForegroundItems = new PImage[1][];
-// 0 = Tree, 1-3 = MC Houses, 4-12 = Houses, 13-14 = Bushes
+// 0 = Village, 1 = Forest, 2 = School, 3 = Home
+// 0 = Tree, 1-3 = MC Houses, 4-12 = Houses, 13-14 = Bushes, 15-17 = Big trees, 18-20 = Trees
 int[][][] itemPositions = {{
-  {0, 450, 750},
+  {1375},
   {45},{-1},{-1},
   {400},{-1},{200},{1100},{-275},{1225},{800},{-150},{925},
-  {175},{600}}}; 
-int[][][] foregroundItemPositions = {{{800}}};
+  {175},{600},
+  {300},{-1},{-1},
+  {0},{550},{750}}}; 
+int[][][] foregroundItemPositions = {{{800},{100}}};
+//Interactable[][] interactables = {{}};
 SoundFile effects[];
 
 // GAME VARIABLES //
@@ -100,13 +104,16 @@ void loadAssets(){
   mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 240, 29);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 2880, 502);
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 2880, 804);
-  levelItems[0] = new PImage[15];
-  levelItems[0][0] = Utilities.loadImagePng(this, "tree.png", 59, 84);
+  levelItems[0] = new PImage[21];
+  levelItems[0][0] = Utilities.loadImagePng(this, "School.png", 216, 188);
   arrayCopy(Utilities.loadImagePng(this, "HousesSpriteSheet.png", 480, 327, 4, 3), 0, levelItems[0], 1, 12);
   arrayCopy(Utilities.loadImagePng(this, "BushesSpriteSheet.png", 96, 34, 2, 1), 0, levelItems[0], 13, 2);
+  arrayCopy(Utilities.loadImagePng(this, "treeBig.png", 378, 172, 3, 1), 0, levelItems[0], 15, 3);
+  arrayCopy(Utilities.loadImagePng(this, "tree.png", 189, 86, 3, 1), 0, levelItems[0], 18, 3);
 
-  levelForegroundItems[0] = new PImage[1];
-  levelForegroundItems[0][0] = levelItems[0][0];
+  levelForegroundItems[0] = new PImage[2];
+  levelForegroundItems[0][0] = levelItems[0][19];
+  levelForegroundItems[0][1] = levelItems[0][13];
 
   bird = Utilities.loadImagePng(this, "bird.png", 72, 21, 4, 1);
 

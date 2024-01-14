@@ -46,7 +46,7 @@ class LevelManager {
   public void renderForeground() {
     for (int i = 0; i < foregroundItems.length; i++) {
       for(int pos : foregroundItemPositions[i]) {
-        image(foregroundItems[i], pos*S - posX*1.2, height - foregroundItems[i].height*FS + 40, foregroundItems[i].width * FS, foregroundItems[i].height * FS);
+        if(pos != -1) image(foregroundItems[i], pos*S - posX*1.2, height - foregroundItems[i].height*FS + 40, foregroundItems[i].width * FS, foregroundItems[i].height * FS);
       }
     }
   }
