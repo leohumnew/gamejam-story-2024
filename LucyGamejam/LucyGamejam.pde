@@ -6,7 +6,7 @@ FadeManager fadeManager = new FadeManager(1500);
 UIManager menuUI = new UIManager();
 UIManager debugUI = new UIManager();
 PImage loading;
-PImage ui[], interactionBubbles[];
+PImage ui[], interactionBubbles[], characters[];
 PImage[][] mainLevelLayers = new PImage[1][3];
 PImage[][] levelItems = new PImage[1][];
 PImage[][] levelForegroundItems = new PImage[1][];
@@ -26,7 +26,7 @@ void settings() {
 }
 
 void setup(){
-  surface.setTitle("Airports");
+  surface.setTitle("Lucy");
   ((PGraphicsOpenGL)g).textureSampling(2);
   frameRate(75);
   background(0);
@@ -89,7 +89,7 @@ void keyReleased() {
 // LOAD ASSETS //
 void loadAssets(){
   //ui = new PImage[8];
-  interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 256, 32, 4, 1);
+  interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 256, 32, 8, 1);
   mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 1920, 232);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 2880, 502);
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 2880, 804);
@@ -98,6 +98,9 @@ void loadAssets(){
   levelItems[0][1] = Utilities.loadImagePng(this, "tree.png", 357, 507);
   levelForegroundItems[0] = new PImage[1];
   levelForegroundItems[0][0] = Utilities.loadImagePng(this, "tree.png", 476, 676);
+
+  characters = new PImage[1];
+  characters[0] = Utilities.loadImagePng(this, "bird.png", 160, 108); // Bird
 
   // Prepare sound effects
   effects = new SoundFile[1];
