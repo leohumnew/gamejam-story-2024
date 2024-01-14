@@ -11,8 +11,13 @@ PImage ui[], interactionBubbles[], bird[];
 PImage[][] mainLevelLayers = new PImage[1][3];
 PImage[][] levelItems = new PImage[1][];
 PImage[][] levelForegroundItems = new PImage[1][];
-int[][][] itemPositions = {{{1450, -900, -1900, -3900},{0},{-1},{2800},{1500},{-1},{-2000},{-1},{-4000},{-5500},{-8000},{-1},{-10000},{-200}, {-600}}};
-int[][][] foregroundItemPositions = {{{800, -3200}}};
+// 0 = Tree, 1-3 = MC Houses, 4-12 = Houses, 13-14 = Bushes
+int[][][] itemPositions = {{
+  {0, 450, 750},
+  {45},{-1},{-1},
+  {400},{-1},{200},{1100},{-275},{1225},{800},{-150},{925},
+  {175},{600}}}; 
+int[][][] foregroundItemPositions = {{{800}}};
 SoundFile effects[];
 
 // GAME VARIABLES //
