@@ -3,6 +3,7 @@ class Player {
   private int speedX = 0;
   private PImage[] images;
   private int lastTime = 0, activeImg = 0;
+  private boolean facingRight = true;
 
   Player(PImage[] images) {
     this.images = images;
@@ -24,8 +25,18 @@ class Player {
   }
 
   void render() {
-    if(speedX == 0) image(images[4], width / 2 - 80, height - 350, 160, 240);
+    if(speedX == 0) {
+      if(effects[0].isPlaying()) effects[0].stop();
+      if(facingRight) image(images[4], width / 2 - 80, height - 350, 160, 240);
+      else {
+        pushMatrix();
+        scale(-1, 1);
+        image(images[4], -(width / 2 + 70), height - 350, 160, 240);
+        popMatrix();
+      }
+    }
     else {
+      if(!effects[0].isPlaying()) effects[0].loop();
       if(millis() > lastTime + 250) {
         activeImg = (activeImg + 1) % 4;
         lastTime = millis();
@@ -35,8 +46,12 @@ class Player {
         scale(-1, 1);
         image(images[activeImg], -(width / 2 + 70), height - 350, 160, 240);
         popMatrix();
+        facingRight = false;
       }
-      else image(images[activeImg], width / 2 - 80, height - 350, 160, 240);
+      else {
+        image(images[activeImg], width / 2 - 80, height - 350, 160, 240);
+        facingRight = true;
+      }
     }
   }
 }
