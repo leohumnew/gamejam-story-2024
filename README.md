@@ -1,2 +1,2 @@
-# gamejam-story-2024
- Our entry for the 2024 Story Game Jam
+# Gamejam Story 2024
+ Our entry for the 2024 [Tell a Story Game Jam](https://itch.io/jam/tell-a-story-jam).
