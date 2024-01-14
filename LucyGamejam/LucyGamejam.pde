@@ -1,30 +1,33 @@
-
 import processing.sound.*;
 final int S = 8, FS = 10;
 
 // GENERAL / MENU VARIABLES //
 int stage = -1; // -2 = Settings, -1 = Loading, 0 = Menu, 1 = Game
-FadeManager fadeManager = new FadeManager(1500);
+FadeManager fadeManager = new FadeManager(1000);
 UIManager menuUI = new UIManager();
 UIManager debugUI = new UIManager();
 PImage loading;
 PImage ui[], interactionBubbles[], bird[];
-PImage[][] mainLevelLayers = new PImage[1][3];
-PImage[][] levelItems = new PImage[1][];
-PImage[][] levelForegroundItems = new PImage[1][];
-// 0 = Village, 1 = Forest, 2 = School, 3 = Home
+PImage[][] mainLevelLayers = new PImage[2][3];
+PImage[][] levelItems = new PImage[2][];
+PImage[][] levelForegroundItems = new PImage[2][];
+// 0 = Village, 1 = School, 2 = Home, 3 = Forest
 // 0 = Highschool, 1-3 = MC Houses, 4-12 = Houses, 13-14 = Bushes, 15-17 = Big trees, 18-20 = Trees, 20-21 = Doors
-int[][][] itemPositions = {{
+float[][][] itemPositions = {{
   {1375},
   {45},{-1},{-1},
   {400},{-1},{200},{1100},{-275},{1225},{800, 1600},{-150},{925},
   {175},{600, 1050},
   {300},{1700},{-1},
   {0},{550},{750},
-  {1449},{113}}}; 
-  // 0 = Trees, 1 = Bushes
-int[][][] foregroundItemPositions = {{{800},{-100, 1380}}};
-HashMap<Integer, Interactable>[] interactables = new HashMap[1];
+  {1449},{113}
+  },{
+  {-200.7},{253.3},{271.3}
+  }
+}; 
+// 0 = Trees, 1 = Bushes
+int[][][] foregroundItemPositions = {{{800},{-100, 1380}},{}};
+HashMap<Integer, Interactable>[] interactables = new HashMap[2];
 SoundFile effects[];
 
 // GAME VARIABLES //
@@ -53,7 +56,7 @@ void draw(){
   if (stage == -2) drawSettings(); // Settings
   else if (stage == -1) image(loading, 0, 0, width, height); // Loading screen
   else if (stage == 0) drawMenu(); // Main menu
-  else if (stage == 1) drawGame(1); // Game
+  else if (stage >= 1) drawGame(1); // Game
 
   fadeManager.update(); // Update fade
   debugUI.render();
@@ -78,6 +81,7 @@ void drawGame(int level){
 // CHANGE STAGE //
 Consumer<Integer> changeStage = i -> {
   if(i > 0) {
+    player.resetPos(i);
     NPC[] npcs = null;
     if(i == 1) {
       NPC[] npcsTemp = { new NPC(bird, -width - 100, 100, true, -25) };
@@ -107,11 +111,16 @@ void keyReleased() {
   if (stage >= 0) player.keyRelease();
 }
 
+Consumer<Integer> playerEmotion = i -> {
+  player.setActiveBubble(i);
+};
+
 // LOAD ASSETS //
 void loadAssets(){
   ui = new PImage[1];
   ui[0] = Utilities.loadImagePng(this, "Enter.png", 32, 32);
   interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 256, 32, 8, 1);
+  // Level 0: Village
   mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 240, 29);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 2880, 502);
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 2880, 804);
@@ -123,10 +132,18 @@ void loadAssets(){
   arrayCopy(Utilities.loadImagePng(this, "tree.png", 189, 86, 3, 1), 0, levelItems[0], 18, 3);
   levelItems[0][21] = Utilities.loadImagePng(this, "SchoolDoor.png", 68, 69);
   levelItems[0][22] = Utilities.loadImagePng(this, "HouseDoor.png", 34, 46);
-
   levelForegroundItems[0] = new PImage[2];
   levelForegroundItems[0][0] = levelItems[0][19];
   levelForegroundItems[0][1] = levelItems[0][13];
+  // Level 2: School
+  mainLevelLayers[1][0] = mainLevelLayers[0][0];
+  mainLevelLayers[1][1] = null;
+  mainLevelLayers[1][2] = mainLevelLayers[0][2];
+  levelItems[1] = new PImage[3];
+  levelItems[1][0] = Utilities.loadImagePng(this, "SchoolInside.png", 858, 135);
+  levelItems[1][1] = Utilities.loadImagePng(this, "Bench.png", 51, 27);
+  levelItems[1][2] = levelItems[0][16];
+  levelForegroundItems[1] = new PImage[0];
 
   bird = Utilities.loadImagePng(this, "bird.png", 72, 21, 4, 1);
 
@@ -136,7 +153,7 @@ void loadAssets(){
   effects[0].rate(2);
 
   // Prepare player
-  player = new Player(Utilities.loadImagePng(this, "PlayerSpriteSheet.png", 256, 48, 8, 1));
+  player = new Player(Utilities.loadImagePng(this, "PlayerSpriteSheet.png", 256, 49, 8, 1));
   loadInteractables();
 
   // Make menu UI
@@ -150,4 +167,7 @@ void loadInteractables() {
   interactables[0] = new HashMap<Integer, Interactable>();
   interactables[0].put(21, new Interactable(fadeStage, 2));
   interactables[0].put(22, new Interactable(fadeStage, 3));
+  interactables[1] = new HashMap<Integer, Interactable>();
+  interactables[1].put(1, new Interactable(playerEmotion, 1));
+  interactables[1].put(2, new Interactable(playerEmotion, 2));
 }

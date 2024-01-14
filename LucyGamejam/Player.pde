@@ -2,7 +2,7 @@ class Player {
   private float posX = 0;
   private int speedX = 0;
   private PImage[] images;
-  private int lastTime = 0, activeImg = 0, activeBubble = -1;
+  private int lastTime = 0, activeImg = 0, activeBubble = -1, bubbleTime = 0;
   private boolean facingRight = true;
   private int playerWidth, playerHeight;
 
@@ -12,10 +12,14 @@ class Player {
     playerHeight = images[0].height*S;
   }
 
+  void resetPos(int newLevel) {
+    posX = 0;
+  }
+
   // Inputs
   void keyPress() {
-    if (key == 'a' || keyCode == LEFT) speedX = -200;
-    else if (key == 'd' || keyCode == RIGHT) speedX = 200;
+    if (key == 'a' || keyCode == LEFT) speedX = -400;
+    else if (key == 'd' || keyCode == RIGHT) speedX = 400;
   }
 
   void keyRelease() {
@@ -26,10 +30,13 @@ class Player {
   // Interactions
   void setActiveBubble(int activeBubble) {
     this.activeBubble = activeBubble;
+    bubbleTime = millis();
   }
 
   // Position update
   int update() {
+    if(activeBubble != -1 && millis() > bubbleTime + 2000) activeBubble = -1;
+
     posX += speedX / frameRate * 10;
     return (int)posX;
   }
