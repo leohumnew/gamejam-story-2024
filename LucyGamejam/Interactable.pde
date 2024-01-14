@@ -1,10 +1,13 @@
 class Interactable {
-  private int posX, area;
+  private int value;
   private Consumer<Integer> callback;
 
-  Interactable(int posX, int area, Consumer<Integer> callback) {
-    this.posX = posX;
-    this.area = area;
+  Interactable(Consumer<Integer> callback, int value) {
+    this.value = value;
     this.callback = callback;
+  }
+
+  void interact() {
+    callback.accept(value);
   }
 }

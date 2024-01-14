@@ -1,3 +1,4 @@
+
 import processing.sound.*;
 final int S = 8, FS = 10;
 
@@ -12,16 +13,17 @@ PImage[][] mainLevelLayers = new PImage[1][3];
 PImage[][] levelItems = new PImage[1][];
 PImage[][] levelForegroundItems = new PImage[1][];
 // 0 = Village, 1 = Forest, 2 = School, 3 = Home
-// 0 = Highschool, 1-3 = MC Houses, 4-12 = Houses, 13-14 = Bushes, 15-17 = Big trees, 18-20 = Trees
+// 0 = Highschool, 1-3 = MC Houses, 4-12 = Houses, 13-14 = Bushes, 15-17 = Big trees, 18-20 = Trees, 20-21 = Doors
 int[][][] itemPositions = {{
   {1375},
   {45},{-1},{-1},
   {400},{-1},{200},{1100},{-275},{1225},{800, 1600},{-150},{925},
   {175},{600, 1050},
   {300},{-1},{-1},
-  {0},{550},{750}}}; 
+  {0},{550},{750},
+  {1449},{113}}}; 
 int[][][] foregroundItemPositions = {{{800},{-100}}};
-//Interactable[][] interactables = {{}};
+HashMap<Integer, Interactable>[] interactables = new HashMap[1];
 SoundFile effects[];
 
 // GAME VARIABLES //
@@ -75,8 +77,12 @@ void drawGame(int level){
 // CHANGE STAGE //
 Consumer<Integer> changeStage = i -> {
   if(i > 0) {
-    NPC[] npcs = {new NPC(bird, -width - 100, 100, true, -25)};
-    activeLevel = new LevelManager(i, mainLevelLayers[i-1], levelItems[i-1], itemPositions[i-1], levelForegroundItems[i-1], foregroundItemPositions[i-1], npcs);
+    NPC[] npcs = null;
+    if(i == 1) {
+      NPC[] npcsTemp = { new NPC(bird, -width - 100, 100, true, -25) };
+      npcs = npcsTemp;
+    }
+    activeLevel = new LevelManager(i, mainLevelLayers[i-1], levelItems[i-1], itemPositions[i-1], levelForegroundItems[i-1], foregroundItemPositions[i-1], npcs, interactables[i-1]);
   }
   stage = i;
 };
@@ -90,7 +96,10 @@ void mouseClicked() {
 }
 
 void keyPressed() {
-  if (stage >= 0) player.keyPress();
+  if (stage >= 0) {
+    activeLevel.keyPress();
+    player.keyPress();
+  }
 }
 
 void keyReleased() {
@@ -99,17 +108,20 @@ void keyReleased() {
 
 // LOAD ASSETS //
 void loadAssets(){
-  //ui = new PImage[8];
+  ui = new PImage[1];
+  ui[0] = Utilities.loadImagePng(this, "Enter.png", 32, 32);
   interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 256, 32, 8, 1);
   mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 240, 29);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 2880, 502);
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 2880, 804);
-  levelItems[0] = new PImage[21];
+  levelItems[0] = new PImage[23];
   levelItems[0][0] = Utilities.loadImagePng(this, "School.png", 216, 188);
   arrayCopy(Utilities.loadImagePng(this, "HousesSpriteSheet.png", 480, 327, 4, 3), 0, levelItems[0], 1, 12);
   arrayCopy(Utilities.loadImagePng(this, "BushesSpriteSheet.png", 96, 34, 2, 1), 0, levelItems[0], 13, 2);
   arrayCopy(Utilities.loadImagePng(this, "treeBig.png", 378, 172, 3, 1), 0, levelItems[0], 15, 3);
   arrayCopy(Utilities.loadImagePng(this, "tree.png", 189, 86, 3, 1), 0, levelItems[0], 18, 3);
+  levelItems[0][21] = Utilities.loadImagePng(this, "SchoolDoor.png", 68, 69);
+  levelItems[0][22] = Utilities.loadImagePng(this, "HouseDoor.png", 34, 46);
 
   levelForegroundItems[0] = new PImage[2];
   levelForegroundItems[0][0] = levelItems[0][19];
@@ -124,10 +136,17 @@ void loadAssets(){
 
   // Prepare player
   player = new Player(Utilities.loadImagePng(this, "PlayerSpriteSheet.png", 256, 48, 8, 1));
+  loadInteractables();
 
   // Make menu UI
   menuUI.add(new ImgButton(width/2, height/2, 300, 100, Utilities.loadImagePng(this, "PlayButton.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonHover.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonPush.png", 300, 100), fadeStage, 1));
   debugUI.add(new FPSCounter(100,100));
 
   fadeStage.accept(0);
+}
+
+void loadInteractables() {
+  interactables[0] = new HashMap<Integer, Interactable>();
+  interactables[0].put(21, new Interactable(fadeStage, 2));
+  interactables[0].put(22, new Interactable(fadeStage, 3));
 }

@@ -7,8 +7,9 @@ class LevelManager {
   int[][] foregroundItemPositions;
   int posX = 0;
   NPC[] npcs;
+  HashMap<Integer, Interactable> interactables;
 
-  LevelManager(int level, PImage mainLayers[], PImage staticItems[], int[][] itemPositions, PImage foregroundItems[], int[][] foregroundItemPositions, NPC[] npcs) {
+  LevelManager(int level, PImage mainLayers[], PImage staticItems[], int[][] itemPositions, PImage foregroundItems[], int[][] foregroundItemPositions, NPC[] npcs, HashMap<Integer, Interactable> interactables) {
     this.level = level;
     this.mainLayers = mainLayers;
     this.staticItems = staticItems;
@@ -16,6 +17,7 @@ class LevelManager {
     this.foregroundItems = foregroundItems;
     this.foregroundItemPositions = foregroundItemPositions;
     this.npcs = npcs;
+    this.interactables = interactables;
   }
 
   // Rendering the level
@@ -25,8 +27,10 @@ class LevelManager {
     image(mainLayers[2], 0, 0);
 
     // Background characters
-    for(NPC npc : npcs) {
-      npc.render(posX);
+    if(npcs != null){
+      for(NPC npc : npcs) {
+        npc.render(posX);
+      }
     }
 
     // Draw the background parallax layers
@@ -38,7 +42,12 @@ class LevelManager {
     // Draw the static items
     for (int i = 0; i < staticItems.length; i++) {
       for(int pos : itemPositions[i]) {
+        if(interactables.containsKey(i) && (posX + width/2)/S > pos && (posX + width/2)/S < pos + staticItems[i].width) {
+          tint(175);
+          image(ui[0], pos*S - posX + staticItems[i].width*S/2 - ui[0].width*S/2, height - staticItems[i].height*S - mainLayers[0].height*S * 0.85 - ui[0].height*S, ui[0].width*S, ui[0].height*S);
+        }
         if(pos != -1) image(staticItems[i], pos*S - posX, height - staticItems[i].height*S - mainLayers[0].height*S * 0.8, staticItems[i].width*S, staticItems[i].height*S);
+        noTint();
       }
     }
   }
@@ -47,6 +56,19 @@ class LevelManager {
     for (int i = 0; i < foregroundItems.length; i++) {
       for(int pos : foregroundItemPositions[i]) {
         if(pos != -1) image(foregroundItems[i], pos*S - posX*1.2, height - foregroundItems[i].height*FS + 40, foregroundItems[i].width * FS, foregroundItems[i].height * FS);
+      }
+    }
+  }
+
+  // INPUT //
+  public void keyPress() {
+    if(key == 'e' || key == 'E' || keyCode == ENTER) {
+      for(int i = 0; i < staticItems.length; i++) {
+        for(int pos : itemPositions[i]) {
+          if(interactables.containsKey(i) && (posX + width/2)/S > pos && (posX + width/2)/S < pos + staticItems[i].width) {
+            interactables.get(i).interact();
+          }
+        }
       }
     }
   }
