@@ -32,8 +32,8 @@ class LevelManager {
     // Draw the background parallax layers
     image(mainLayers[1], Math.floorMod(posX/2, mainLayers[1].width), height - mainLayers[0].height - mainLayers[1].height + 10);
     image(mainLayers[1], Math.floorMod(posX/2 + mainLayers[1].width, mainLayers[1].width) - mainLayers[1].width, height - mainLayers[0].height - mainLayers[1].height + 10);
-    image(mainLayers[0], Math.floorMod(posX, (2*mainLayers[0].width)) - mainLayers[0].width, height - mainLayers[0].height);
-    image(mainLayers[0], Math.floorMod(posX + mainLayers[0].width, 2*mainLayers[0].width) - mainLayers[0].width, height - mainLayers[0].height);
+    image(mainLayers[0], Math.floorMod(posX, (2*mainLayers[0].width)) - mainLayers[0].width, height - mainLayers[0].height, mainLayers[0].width*S, mainLayers[0].height*S);
+    image(mainLayers[0], Math.floorMod(posX + mainLayers[0].width, 2*mainLayers[0].width) - mainLayers[0].width, height - mainLayers[0].height, mainLayers[0].width*S, mainLayers[0].height*S);
     
     // Draw the static items
     for (int i = 0; i < staticItems.length; i++) {
