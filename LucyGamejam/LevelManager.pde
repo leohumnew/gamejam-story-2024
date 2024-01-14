@@ -38,7 +38,7 @@ class LevelManager {
     // Draw the static items
     for (int i = 0; i < staticItems.length; i++) {
       for(int pos : itemPositions[i]) {
-        if(pos != -1) image(staticItems[i], pos - posX, height - staticItems[i].height*S - mainLayers[0].height*S * 0.8, staticItems[i].width*S, staticItems[i].height*S);
+        if(pos != -1) image(staticItems[i], pos*S - posX, height - staticItems[i].height*S - mainLayers[0].height*S * 0.8, staticItems[i].width*S, staticItems[i].height*S);
       }
     }
   }
@@ -46,7 +46,7 @@ class LevelManager {
   public void renderForeground() {
     for (int i = 0; i < foregroundItems.length; i++) {
       for(int pos : foregroundItemPositions[i]) {
-        image(foregroundItems[i], pos - posX*1.2, height - foregroundItems[i].height*FS + 40, foregroundItems[i].width * FS, foregroundItems[i].height * FS);
+        image(foregroundItems[i], pos*S - posX*1.2, height - foregroundItems[i].height*FS + 40, foregroundItems[i].width * FS, foregroundItems[i].height * FS);
       }
     }
   }
