@@ -14,8 +14,8 @@ class Player {
 
   // Inputs
   void keyPress() {
-    if (key == 'a' || keyCode == LEFT) speedX = 20;
-    else if (key == 'd' || keyCode == RIGHT) speedX = -20;
+    if (key == 'a' || keyCode == LEFT) speedX = -20;
+    else if (key == 'd' || keyCode == RIGHT) speedX = 20;
   }
 
   void keyRelease() {
@@ -38,7 +38,7 @@ class Player {
     if(speedX == 0) {
       if(effects[0].isPlaying()) effects[0].stop();
 
-      if(facingRight) image(images[4], width / 2 - playerWidth/2, height - playerHeight*1.3, playerWidth, playerHeight);
+      if(!facingRight) image(images[4], width / 2 - playerWidth/2, height - playerHeight*1.3, playerWidth, playerHeight);
       else {
         pushMatrix();
         scale(-1, 1);
@@ -53,15 +53,15 @@ class Player {
         lastTime = millis();
       }
       if(speedX > 0) {
+        image(images[activeImg], width / 2 - playerWidth/2, height - playerHeight*1.3, playerWidth, playerHeight);
+        facingRight = true;
+      }
+      else {
         pushMatrix();
         scale(-1, 1);
         image(images[activeImg], -(width / 2 + playerWidth/2 - 10), height - playerHeight*1.3, playerWidth, playerHeight);
         popMatrix();
         facingRight = false;
-      }
-      else {
-        image(images[activeImg], width / 2 - playerWidth/2, height - playerHeight*1.3, playerWidth, playerHeight);
-        facingRight = true;
       }
     }
 

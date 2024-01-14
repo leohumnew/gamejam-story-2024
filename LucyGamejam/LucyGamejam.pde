@@ -11,7 +11,7 @@ PImage ui[], interactionBubbles[], bird[];
 PImage[][] mainLevelLayers = new PImage[1][3];
 PImage[][] levelItems = new PImage[1][];
 PImage[][] levelForegroundItems = new PImage[1][];
-int[][][] itemPositions = {{{1450, -900, -1900, -3900},{0},{-1},{2800},{1500},{-1},{-2000},{-1},{-4000},{-5500},{-8000},{-1},{-10000}}};
+int[][][] itemPositions = {{{1450, -900, -1900, -3900},{0},{-1},{2800},{1500},{-1},{-2000},{-1},{-4000},{-5500},{-8000},{-1},{-10000},{-200}, {-600}}};
 int[][][] foregroundItemPositions = {{{800, -3200}}};
 SoundFile effects[];
 
@@ -66,7 +66,7 @@ void drawGame(int level){
 // CHANGE STAGE //
 Consumer<Integer> changeStage = i -> {
   if(i > 0) {
-    NPC[] npcs = {new NPC(bird, -width - 100, 100, true, -15)};
+    NPC[] npcs = {new NPC(bird, -width - 100, 100, true, -25)};
     activeLevel = new LevelManager(i, mainLevelLayers[i-1], levelItems[i-1], itemPositions[i-1], levelForegroundItems[i-1], foregroundItemPositions[i-1], npcs);
   }
   stage = i;
@@ -95,9 +95,10 @@ void loadAssets(){
   mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 240, 29);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 2880, 502);
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 2880, 804);
-  levelItems[0] = new PImage[13];
+  levelItems[0] = new PImage[15];
   levelItems[0][0] = Utilities.loadImagePng(this, "tree.png", 59, 84);
   arrayCopy(Utilities.loadImagePng(this, "HousesSpriteSheet.png", 480, 327, 4, 3), 0, levelItems[0], 1, 12);
+  arrayCopy(Utilities.loadImagePng(this, "BushesSpriteSheet.png", 96, 34, 2, 1), 0, levelItems[0], 13, 2);
 
   levelForegroundItems[0] = new PImage[1];
   levelForegroundItems[0][0] = levelItems[0][0];

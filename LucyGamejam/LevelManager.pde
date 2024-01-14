@@ -30,15 +30,15 @@ class LevelManager {
     }
 
     // Draw the background parallax layers
-    image(mainLayers[1], Math.floorMod(posX/2, mainLayers[1].width), height - mainLayers[0].height - mainLayers[1].height + 10);
-    image(mainLayers[1], Math.floorMod(posX/2 + mainLayers[1].width, mainLayers[1].width) - mainLayers[1].width, height - mainLayers[0].height - mainLayers[1].height + 10);
-    image(mainLayers[0], Math.floorMod(posX, (2*mainLayers[0].width)) - mainLayers[0].width, height - mainLayers[0].height, mainLayers[0].width*S, mainLayers[0].height*S);
-    image(mainLayers[0], Math.floorMod(posX + mainLayers[0].width, 2*mainLayers[0].width) - mainLayers[0].width, height - mainLayers[0].height, mainLayers[0].width*S, mainLayers[0].height*S);
+    image(mainLayers[1], Math.floorMod(-posX/2, mainLayers[1].width), height - mainLayers[0].height*S - mainLayers[1].height + 10);
+    image(mainLayers[1], Math.floorMod(-posX/2 + mainLayers[1].width, mainLayers[1].width) - mainLayers[1].width, height - mainLayers[0].height*S - mainLayers[1].height + 10);
+    image(mainLayers[0], Math.floorMod(-posX, (2*mainLayers[0].width*S)) - mainLayers[0].width*S, height - mainLayers[0].height*S, mainLayers[0].width*S, mainLayers[0].height*S);
+    image(mainLayers[0], Math.floorMod(-posX + mainLayers[0].width*S, 2*mainLayers[0].width*S) - mainLayers[0].width*S, height - mainLayers[0].height*S, mainLayers[0].width*S, mainLayers[0].height*S);
     
     // Draw the static items
     for (int i = 0; i < staticItems.length; i++) {
       for(int pos : itemPositions[i]) {
-        if(pos != -1) image(staticItems[i], posX - pos, height - staticItems[i].height*S - mainLayers[0].height * 0.75, staticItems[i].width*S, staticItems[i].height*S);
+        if(pos != -1) image(staticItems[i], pos - posX, height - staticItems[i].height*S - mainLayers[0].height*S * 0.8, staticItems[i].width*S, staticItems[i].height*S);
       }
     }
   }
@@ -46,7 +46,7 @@ class LevelManager {
   public void renderForeground() {
     for (int i = 0; i < foregroundItems.length; i++) {
       for(int pos : foregroundItemPositions[i]) {
-        image(foregroundItems[i], posX*1.2 - pos, height - foregroundItems[i].height*FS + 40, foregroundItems[i].width * FS, foregroundItems[i].height * FS);
+        image(foregroundItems[i], pos - posX*1.2, height - foregroundItems[i].height*FS + 40, foregroundItems[i].width * FS, foregroundItems[i].height * FS);
       }
     }
   }

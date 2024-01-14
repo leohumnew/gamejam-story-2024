@@ -18,18 +18,18 @@ class NPC {
     }
     if(isMoving) { // Draw sprite and update position, depending on direction
       x += speedX / frameRate * 10;
-      if(x < posX - width - 200 || x > posX + 200) {
+      if(x < posX - 200 || x > posX + width + 200) {
         if(random(0,1) > 0.95) {
-          speedX *= random(0,1) > 0.5 ? 1 : -1;
-          x = speedX > 0 ? posX - width - 180 : posX + 180;
+          speedX *= (random(0,1) > 0.5 ? 1 : -1);
+          x = (speedX > 0 ? posX - 180 : posX + width + 180);
         }
-        else return;
+        return;
       }
     }
     pushMatrix();
-    scale(speedX > 0 ? 1 : -1, 1);
+    scale(speedX > 0 ? -1 : 1, 1);
     tint(#dff3ff); // #dff3ff or #fbf236 when #ff7c2e
-    image(images[currentImage], x - posX, y, images[currentImage].width*S, images[currentImage].height*S);
+    image(images[currentImage], posX - x, y, images[currentImage].width*S, images[currentImage].height*S);
     noTint();
     popMatrix();
   }
