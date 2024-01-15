@@ -52,8 +52,8 @@ class LevelManager {
 
     // Draw the background parallax layers
     if(mainLayers[1] != null) {
-      image(mainLayers[1], Math.floorMod(-posX/2, mainLayers[1].width*S), bgYPos[1], mainLayers[1].width*S, mainLayers[1].height*S);
-      image(mainLayers[1], Math.floorMod(-posX/2 + mainLayers[1].width*S, mainLayers[1].width*S) - mainLayers[1].width*S, bgYPos[1], mainLayers[1].width*S, mainLayers[1].height*S);
+      image(mainLayers[1], Math.floorMod(-posX/3, mainLayers[1].width*S), bgYPos[1], mainLayers[1].width*S, mainLayers[1].height*S);
+      image(mainLayers[1], Math.floorMod(-posX/3 + mainLayers[1].width*S, mainLayers[1].width*S) - mainLayers[1].width*S, bgYPos[1], mainLayers[1].width*S, mainLayers[1].height*S);
     }
 
     // Change tints for closer foreground
@@ -82,7 +82,7 @@ class LevelManager {
       for(int j = 0; j < itemPositions[i].length; j++) {
         int pos = (int)itemPositions[i][j];
         if(pos != -1) {
-          int yOffset = (pos == itemPositions[i][j]) ? (int)(mainLayers[0].height*0.7) : round((abs(itemPositions[i][j]) % pos) * 100); // Get y position from the decimal part of the position, offset to allow for negatives
+          int yOffset = (pos == itemPositions[i][j]) ? (int)(mainLayers[0].height*0.78) : round((abs(itemPositions[i][j]) % pos) * 100); // Get y position from the decimal part of the position, offset to allow for negatives
           if(interactables.containsKey(i) && (posX + width/2)/S > pos && (posX + width/2)/S < pos + staticItems[i].width) {
             pushStyle();
             tint(170);
