@@ -7,8 +7,8 @@ FadeManager fadeManager = new FadeManager(1000);
 UIManager menuUI = new UIManager();
 UIManager debugUI = new UIManager();
 PImage loading;
-PImage ui[], interactionBubbles[], bird[];
-PImage[][] mainLevelLayers = new PImage[3][3];
+PImage ui[], interactionBubbles[], bird[], extraImages[];
+PImage[][] mainLevelLayers = new PImage[3][5];
 PImage[][] levelItems = new PImage[3][];
 PImage[][] levelForegroundItems = new PImage[3][];
 // 0 = Village, 1 = School, 2 = Home, 3 = Forest
@@ -24,7 +24,7 @@ float[][][] itemPositions = {
   },{ // 0 = School, 1 = Bench, 2 = Tree, 3 = Class door
     {-200.001},{219.4},{275.41},{89.43},{-194.001}
   },{
-    {-10.001},{60.4},{385.3},{444.3},{494.3},{367.3},{236.4},{175.4}
+    {-10.001},{60.4},{385.3},{444.3},{494.3},{367.3},{236.4},{175.4},{-160, 590}
   }
 }; 
 // 0 = Trees, 1 = Bushes
@@ -85,12 +85,16 @@ void drawGame(int level){
 Consumer<Integer> changeStage = i -> {
   if(i > 0) {
     player.changeLevel(i);
-    NPC[] npcs = null;
+    activeLevel = new LevelManager(i, mainLevelLayers[i-1], levelItems[i-1], itemPositions[i-1], levelForegroundItems[i-1], foregroundItemPositions[i-1], interactables[i-1]);
+    // Level extras
     if(i == 1) {
-      NPC[] npcsTemp = { new NPC(bird, -width - 100, 100, true, -25) };
-      npcs = npcsTemp;
+      NPC[] npcs = { new NPC(bird, -width - 100, 100, true, -25) };
+      activeLevel.addNPCs(npcs);
+    } else if(i == 3) {
+      PImage[] argumentImages = new PImage[2];
+      arrayCopy(extraImages, 0, argumentImages, 0, 2);
+      activeLevel.addExtraLayers(argumentImages, new float[][]{{205, 37, 1.12}, {150, 37, 1.12}});
     }
-    activeLevel = new LevelManager(i, mainLevelLayers[i-1], levelItems[i-1], itemPositions[i-1], levelForegroundItems[i-1], foregroundItemPositions[i-1], npcs, interactables[i-1]);
   }
   stage = i;
 };
@@ -127,6 +131,8 @@ void loadAssets(){
   mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 240, 29);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 360, 62);
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 360, 100);
+  mainLevelLayers[0][3] = Utilities.loadImagePng(this, "Sunset.png", 240, 135);
+  mainLevelLayers[0][4] = Utilities.loadImagePng(this, "NightSky.png", 240, 135);
   levelItems[0] = new PImage[23];
   levelItems[0][0] = Utilities.loadImagePng(this, "School.png", 216, 188);
   arrayCopy(Utilities.loadImagePng(this, "HousesSpriteSheet.png", 480, 327, 4, 3), 0, levelItems[0], 1, 12);
@@ -139,9 +145,7 @@ void loadAssets(){
   levelForegroundItems[0][0] = levelItems[0][19];
   levelForegroundItems[0][1] = levelItems[0][13];
   // Level 1: School
-  mainLevelLayers[1][0] = mainLevelLayers[0][0];
-  mainLevelLayers[1][1] = mainLevelLayers[0][1];
-  mainLevelLayers[1][2] = mainLevelLayers[0][2];
+  mainLevelLayers[1] = mainLevelLayers[0];
   levelItems[1] = new PImage[5];
   levelItems[1][0] = Utilities.loadImagePng(this, "SchoolInside.png", 858, 135);
   levelItems[1][1] = Utilities.loadImagePng(this, "Bench.png", 51, 27);
@@ -149,10 +153,8 @@ void loadAssets(){
   levelItems[1][4] = Utilities.loadImagePng(this, "ExitSchoolDoor.png", 40, 124);
   levelForegroundItems[1] = new PImage[0];
   // Level 2: Home
-  mainLevelLayers[2][0] = mainLevelLayers[0][0];
-  mainLevelLayers[2][1] = mainLevelLayers[0][1];
-  mainLevelLayers[2][2] = mainLevelLayers[0][2];
-  levelItems[2] = new PImage[8];
+  mainLevelLayers[2] = mainLevelLayers[0];
+  levelItems[2] = new PImage[9];
   levelItems[2][0] = Utilities.loadImagePng(this, "HouseInside.png", 570, 135);
   levelItems[2][1] = Utilities.loadImagePng(this, "ExitHouseDoor.png", 32, 46);
   levelItems[2][2] = Utilities.loadImagePng(this, "Bed.png", 57, 34);
@@ -161,8 +163,14 @@ void loadAssets(){
   levelItems[2][5] = Utilities.loadImagePng(this, "Cage.png", 16, 45);
   levelItems[2][6] = Utilities.loadImagePng(this, "KitchenDoor.png", 32, 46);
   levelItems[2][7] = Utilities.loadImagePng(this, "LivingDoor.png", 32, 46);
+  levelItems[2][8] = levelItems[0][15];
   levelForegroundItems[2] = new PImage[1];
   levelForegroundItems[2][0] = Utilities.loadImagePng(this, "Piano.png", 67, 29);
+
+  // Load extra images
+  extraImages = new PImage[2];
+  extraImages[0] = Utilities.loadImagePng(this, "KitchenBG.png", 114, 46);
+  extraImages[1] = Utilities.loadImagePng(this, "LivingBG.png", 61, 46);
 
   bird = Utilities.loadImagePng(this, "bird.png", 72, 21, 4, 1);
 

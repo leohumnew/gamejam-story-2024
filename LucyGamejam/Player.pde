@@ -21,8 +21,8 @@ class Player {
 
   // Inputs
   void keyPress() {
-    if (key == 'a' || keyCode == LEFT) speedX = -400;
-    else if (key == 'd' || keyCode == RIGHT) speedX = 400;
+    if (key == 'a' || keyCode == LEFT) speedX = -30;
+    else if (key == 'd' || keyCode == RIGHT) speedX = 30;
   }
 
   void keyRelease() {
