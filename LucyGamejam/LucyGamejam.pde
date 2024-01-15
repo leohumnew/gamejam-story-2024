@@ -24,7 +24,7 @@ float[][][] itemPositions = {
   },{ // 0 = School, 1 = Bench, 2 = Tree, 3 = Class door, 4 = Exit door
     {-200.001},{253.4},{315.4},{113.42},{-194.001}
   },{
-    {-10.001},{60.4},{385.3},{444.3},{489.36},{367.3},{236.4},{175.4},{-160, 580},{-70,575}
+    {-10.001},{60.39},{385.3},{444.3},{489.36},{367.3},{236.39},{175.39},{-160, 580},{-70,575}
   }
 }; 
 // 0 = Trees, 1 = Bushes
@@ -132,7 +132,7 @@ void loadAssets(){
   ui[0] = Utilities.loadImagePng(this, "Enter.png", 32, 32);
   interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 256, 32, 8, 1);
   // Level 0: Village
-  mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 240, 41);
+  mainLevelLayers[0][0] = Utilities.loadImagePng(this, "GroundPath.png", 240, 41);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 360, 62);
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 358, 100);
   mainLevelLayers[0][3] = Utilities.loadImagePng(this, "Sunset.png", 240, 135);
@@ -157,7 +157,11 @@ void loadAssets(){
   levelItems[1][4] = Utilities.loadImagePng(this, "ExitSchoolDoor.png", 40, 124);
   levelForegroundItems[1] = new PImage[0];
   // Level 2: Home
-  mainLevelLayers[2] = mainLevelLayers[0];
+  mainLevelLayers[2][0] = Utilities.loadImagePng(this, "Ground.png", 240, 41);
+  mainLevelLayers[2][1] = mainLevelLayers[0][1];
+  mainLevelLayers[2][2] = mainLevelLayers[0][2];
+  mainLevelLayers[2][3] = Utilities.loadImagePng(this, "SunsetNoSun.png", 240, 135);
+  mainLevelLayers[2][4] = mainLevelLayers[0][4];
   levelItems[2] = new PImage[10];
   levelItems[2][0] = Utilities.loadImagePng(this, "HouseInside.png", 570, 135);
   levelItems[2][1] = Utilities.loadImagePng(this, "ExitHouseDoor.png", 32, 46);

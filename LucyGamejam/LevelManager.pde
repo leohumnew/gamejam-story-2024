@@ -60,14 +60,14 @@ class LevelManager {
     if(timeOfDay >= 18 && timeOfDay < 20) tint(#715A51);
     else if(timeOfDay >= 20 || timeOfDay < 6) tint(#5E67A0);
 
+    if(mainLayers[0] != null) { // Main layer
+      image(mainLayers[0], Math.floorMod(-posX, (2*mainLayers[0].width*S)) - mainLayers[0].width*S, bgYPos[0], mainLayers[0].width*S, mainLayers[0].height*S);
+      image(mainLayers[0], Math.floorMod(-posX + mainLayers[0].width*S, 2*mainLayers[0].width*S) - mainLayers[0].width*S, bgYPos[0], mainLayers[0].width*S, mainLayers[0].height*S);
+    }
     if(extraLayers != null) {
       for(int i = 0; i < extraLayers.length; i++) {
         image(extraLayers[i], extraPositions[i][0]*S - (posX/extraPositions[i][2]), height - (extraLayers[i].height + extraPositions[i][1])*S, extraLayers[i].width*S, extraLayers[i].height*S);
       }
-    }
-    if(mainLayers[0] != null) { // Main layer
-      image(mainLayers[0], Math.floorMod(-posX, (2*mainLayers[0].width*S)) - mainLayers[0].width*S, bgYPos[0], mainLayers[0].width*S, mainLayers[0].height*S);
-      image(mainLayers[0], Math.floorMod(-posX + mainLayers[0].width*S, 2*mainLayers[0].width*S) - mainLayers[0].width*S, bgYPos[0], mainLayers[0].width*S, mainLayers[0].height*S);
     }
 
     // Background characters
