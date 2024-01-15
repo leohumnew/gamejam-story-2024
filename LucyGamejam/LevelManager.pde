@@ -1,13 +1,12 @@
 class LevelManager {
   private int level, bgCharPos = width + 50, animationFrame = 0;
-  PImage[] mainLayers;
-  PImage[] staticItems;
-  PImage[] foregroundItems;
-  float[][] itemPositions;
-  int[][] foregroundItemPositions;
-  int posX = 0;
-  NPC[] npcs;
-  HashMap<Integer, Interactable> interactables;
+  private PImage[] mainLayers, staticItems, foregroundItems, extraLayers;
+  private float[][] itemPositions;
+  private int[][] foregroundItemPositions;
+  int posX = 0, timeOfDay = 12;
+  private int[] bgYPos = new int[2], extraPositions;
+  private NPC[] npcs;
+  private HashMap<Integer, Interactable> interactables;
 
   LevelManager(int level, PImage mainLayers[], PImage staticItems[], float[][] itemPositions, PImage foregroundItems[], int[][] foregroundItemPositions, NPC[] npcs, HashMap<Integer, Interactable> interactables) {
     this.level = level;
@@ -18,12 +17,35 @@ class LevelManager {
     this.foregroundItemPositions = foregroundItemPositions;
     this.npcs = npcs;
     this.interactables = interactables;
+    bgYPos[0] = height - (mainLayers[0] == null ? 0 : mainLayers[0].height*S);
+    bgYPos[1] = bgYPos[0] - (mainLayers[1] == null ? 0 : mainLayers[1].height - 1)*S;
+  }
+
+  public void addExtraLayers(PImage[] extraLayers, int[] extraPositions) {
+    this.extraLayers = extraLayers;
+    this.extraPositions = extraPositions;
+  }
+
+  public void setTimeOfDay(int timeOfDay) {
+    this.timeOfDay = timeOfDay;
   }
 
   // Rendering the level
   public void render(int posX) {
     this.posX = posX;
-    background(#73CEF7);
+    // Set sky colour and tint based on time
+    if(timeOfDay > 6 && timeOfDay < 18) {
+      background(#73CEF7);
+      noTint();
+    }
+    else if(timeOfDay >= 18 && timeOfDay < 20) {
+      background(#ff7c2e);
+      tint(#fbf236);
+    }
+    else if(timeOfDay >= 20 || timeOfDay < 6) {
+      background(#000000);
+      tint(#898FFF);
+    }
     image(mainLayers[2], 0, 0, mainLayers[2].width*S, mainLayers[2].height*S);
 
     // Background characters
@@ -35,12 +57,14 @@ class LevelManager {
 
     // Draw the background parallax layers
     if(mainLayers[1] != null) {
-      image(mainLayers[1], Math.floorMod(-posX/2, mainLayers[1].width*S), height - mainLayers[0].height*S - mainLayers[1].height*S + 10, mainLayers[1].width*S, mainLayers[1].height*S);
-      image(mainLayers[1], Math.floorMod(-posX/2 + mainLayers[1].width*S, mainLayers[1].width*S) - mainLayers[1].width*S, height - mainLayers[0].height*S - mainLayers[1].height*S + 10, mainLayers[1].width*S, mainLayers[1].height*S);
+      image(mainLayers[1], Math.floorMod(-posX/2, mainLayers[1].width*S), bgYPos[1], mainLayers[1].width*S, mainLayers[1].height*S);
+      image(mainLayers[1], Math.floorMod(-posX/2 + mainLayers[1].width*S, mainLayers[1].width*S) - mainLayers[1].width*S, bgYPos[1], mainLayers[1].width*S, mainLayers[1].height*S);
     }
-    image(mainLayers[0], Math.floorMod(-posX, (2*mainLayers[0].width*S)) - mainLayers[0].width*S, height - mainLayers[0].height*S, mainLayers[0].width*S, mainLayers[0].height*S);
-    image(mainLayers[0], Math.floorMod(-posX + mainLayers[0].width*S, 2*mainLayers[0].width*S) - mainLayers[0].width*S, height - mainLayers[0].height*S, mainLayers[0].width*S, mainLayers[0].height*S);
-    
+    if(mainLayers[0] != null) {
+      image(mainLayers[0], Math.floorMod(-posX, (2*mainLayers[0].width*S)) - mainLayers[0].width*S, bgYPos[0], mainLayers[0].width*S, mainLayers[0].height*S);
+      image(mainLayers[0], Math.floorMod(-posX + mainLayers[0].width*S, 2*mainLayers[0].width*S) - mainLayers[0].width*S, bgYPos[0], mainLayers[0].width*S, mainLayers[0].height*S);
+    }
+
     // Draw the static items
     for (int i = 0; i < staticItems.length; i++) {
       for(int j = 0; j < itemPositions[i].length; j++) {

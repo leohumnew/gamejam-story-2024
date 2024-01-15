@@ -27,7 +27,7 @@ class NPC {
       }
     }
 
-    tint(#dff3ff); // #dff3ff or #fbf236 when #ff7c2e
+    //tint(#dff3ff); // #dff3ff or #fbf236 when #ff7c2e
     if(speedX > 0) {
       pushMatrix();
       image(images[currentImage], x - posX, y, images[currentImage].width*S, images[currentImage].height*S);
@@ -35,6 +35,6 @@ class NPC {
       scale(speedX > 0 ? -1 : 1, 1);
       popMatrix();
     } else image(images[currentImage], x - posX, y, images[currentImage].width*S, images[currentImage].height*S);
-    noTint();
+    //noTint();
   }
 }
