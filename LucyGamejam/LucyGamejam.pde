@@ -21,21 +21,21 @@ float[][][] itemPositions = {
     {300},{1700},{-400},
     {0},{550},{750},
     {1449},{113}
-  },{ // 0 = School, 1 = Bench, 2 = Tree, 3 = Class door
-    {-200.001},{219.4},{275.41},{89.43},{-194.001}
+  },{ // 0 = School, 1 = Bench, 2 = Tree, 3 = Class door, 4 = Exit door
+    {-200.001},{253.4},{315.4},{113.42},{-194.001}
   },{
-    {-10.001},{60.4},{385.3},{444.3},{494.3},{367.3},{236.4},{175.4},{-160, 590}
+    {-10.001},{60.4},{385.3},{444.3},{489.36},{367.3},{236.4},{175.4},{-160, 580},{-70,575}
   }
 }; 
 // 0 = Trees, 1 = Bushes
-int[][][] foregroundItemPositions = {{{800},{-110, 1380}},{},{{470}}};
+int[][][] foregroundItemPositions = {{{800},{-110, 1380}},{},{{470},{-110, 645}}};
 HashMap<Integer, Interactable>[] interactables = new HashMap[3];
 SoundFile effects[];
 
 // GAME VARIABLES //
 LevelManager activeLevel;
 Player player;
-int[][] worldLimits = {{-230, 1750}, {-176, 550}, {15, 532}};
+int[][] worldLimits = {{-230, 1750}, {-176, 560}, {15, 532}};
 
 // MAIN FUNCTIONS //
 void settings() {
@@ -47,7 +47,7 @@ void settings() {
 void setup(){
   surface.setTitle("Lucy");
   ((PGraphicsOpenGL)g).textureSampling(2);
-  frameRate(75);
+  frameRate(60);
   background(0);
 
   // Load screen while loading assets
@@ -90,10 +90,14 @@ Consumer<Integer> changeStage = i -> {
     if(i == 1) {
       NPC[] npcs = { new NPC(bird, -width - 100, 100, true, -25) };
       activeLevel.addNPCs(npcs);
+    } else if(i == 2) {
+      PImage[] argumentImages = new PImage[1];
+      arrayCopy(extraImages, 2, argumentImages, 0, 1);
+      activeLevel.addExtraLayers(argumentImages, new float[][]{{-20, 44, 1.13}});
     } else if(i == 3) {
       PImage[] argumentImages = new PImage[2];
       arrayCopy(extraImages, 0, argumentImages, 0, 2);
-      activeLevel.addExtraLayers(argumentImages, new float[][]{{205, 37, 1.12}, {150, 37, 1.12}});
+      activeLevel.addExtraLayers(argumentImages, new float[][]{{205, 37, 1.13}, {150, 37, 1.13}});
     }
   }
   stage = i;
@@ -128,9 +132,9 @@ void loadAssets(){
   ui[0] = Utilities.loadImagePng(this, "Enter.png", 32, 32);
   interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 256, 32, 8, 1);
   // Level 0: Village
-  mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 240, 29);
+  mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 240, 41);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 360, 62);
-  mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 360, 100);
+  mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 358, 100);
   mainLevelLayers[0][3] = Utilities.loadImagePng(this, "Sunset.png", 240, 135);
   mainLevelLayers[0][4] = Utilities.loadImagePng(this, "NightSky.png", 240, 135);
   levelItems[0] = new PImage[23];
@@ -147,14 +151,14 @@ void loadAssets(){
   // Level 1: School
   mainLevelLayers[1] = mainLevelLayers[0];
   levelItems[1] = new PImage[5];
-  levelItems[1][0] = Utilities.loadImagePng(this, "SchoolInside.png", 858, 135);
+  levelItems[1][0] = Utilities.loadImagePng(this, "SchoolInside.png", 924, 135);
   levelItems[1][1] = Utilities.loadImagePng(this, "Bench.png", 51, 27);
   levelItems[1][2] = Utilities.loadImagePng(this, "treeBigTrunk.png", 69, 72);
   levelItems[1][4] = Utilities.loadImagePng(this, "ExitSchoolDoor.png", 40, 124);
   levelForegroundItems[1] = new PImage[0];
   // Level 2: Home
   mainLevelLayers[2] = mainLevelLayers[0];
-  levelItems[2] = new PImage[9];
+  levelItems[2] = new PImage[10];
   levelItems[2][0] = Utilities.loadImagePng(this, "HouseInside.png", 570, 135);
   levelItems[2][1] = Utilities.loadImagePng(this, "ExitHouseDoor.png", 32, 46);
   levelItems[2][2] = Utilities.loadImagePng(this, "Bed.png", 57, 34);
@@ -164,13 +168,16 @@ void loadAssets(){
   levelItems[2][6] = Utilities.loadImagePng(this, "KitchenDoor.png", 32, 46);
   levelItems[2][7] = Utilities.loadImagePng(this, "LivingDoor.png", 32, 46);
   levelItems[2][8] = levelItems[0][15];
-  levelForegroundItems[2] = new PImage[1];
+  levelItems[2][9] = levelItems[0][13];
+  levelForegroundItems[2] = new PImage[2];
   levelForegroundItems[2][0] = Utilities.loadImagePng(this, "Piano.png", 67, 29);
+  levelForegroundItems[2][1] = levelItems[0][13];
 
   // Load extra images
-  extraImages = new PImage[2];
+  extraImages = new PImage[3];
   extraImages[0] = Utilities.loadImagePng(this, "KitchenBG.png", 114, 46);
   extraImages[1] = Utilities.loadImagePng(this, "LivingBG.png", 61, 46);
+  extraImages[2] = Utilities.loadImagePng(this, "WindowBG.png", 255, 57);
 
   bird = Utilities.loadImagePng(this, "bird.png", 72, 21, 4, 1);
 
@@ -202,7 +209,7 @@ void loadInteractables() {
   interactables[1].put(2, new Interactable(playerEmotion, 2));
   doorAnim = Utilities.loadImagePng(this, "SchoolInsideDoorSpriteSheet.png", 324, 48, 6, 1);
   interactables[1].put(3, new Interactable(playerEmotion, 3, doorAnim));
-  levelItems[1][3] = doorAnim[0];
+  levelItems[1][3] = doorAnim[5];
   interactables[1].put(4, new Interactable(fadeStage, 1));
   // Level 2: Home
   interactables[2] = new HashMap<Integer, Interactable>();

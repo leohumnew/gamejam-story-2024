@@ -18,7 +18,7 @@ class LevelManager {
     this.foregroundItemPositions = foregroundItemPositions;
     this.interactables = interactables;
     bgYPos[0] = height - (mainLayers[0] == null ? 0 : mainLayers[0].height*S);
-    bgYPos[1] = bgYPos[0] - (mainLayers[1] == null ? 0 : mainLayers[1].height - 1)*S;
+    bgYPos[1] = bgYPos[0] - (mainLayers[1] == null ? 0 : mainLayers[1].height - 3)*S;
   }
   public void addExtraLayers(PImage[] extraLayers, float[][] extraPositions) {
     this.extraLayers = extraLayers;
@@ -82,7 +82,7 @@ class LevelManager {
       for(int j = 0; j < itemPositions[i].length; j++) {
         int pos = (int)itemPositions[i][j];
         if(pos != -1) {
-          int yOffset = (pos == itemPositions[i][j]) ? (int)(mainLayers[0].height*0.8) : (int)((abs(itemPositions[i][j]) % pos) * 100); // Get y position from the decimal part of the position, offset to allow for negatives
+          int yOffset = (pos == itemPositions[i][j]) ? (int)(mainLayers[0].height*0.7) : round((abs(itemPositions[i][j]) % pos) * 100); // Get y position from the decimal part of the position, offset to allow for negatives
           if(interactables.containsKey(i) && (posX + width/2)/S > pos && (posX + width/2)/S < pos + staticItems[i].width) {
             pushStyle();
             tint(170);
