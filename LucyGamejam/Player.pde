@@ -1,5 +1,5 @@
 class Player {
-  private float posX = 0;
+  private float posX = 0, tempPosX = 0;
   private int speedX = 0;
   private PImage[] images;
   private int lastTime = 0, activeImg = 0, activeBubble = -1, bubbleTime = 0;
@@ -34,22 +34,24 @@ class Player {
   }
 
   // Position update
-  int update() {
+  int update(int[] worldLimits) {
     if(activeBubble != -1 && millis() > bubbleTime + 2000) activeBubble = -1;
 
-    posX += speedX / frameRate * 10;
+    tempPosX = posX + speedX / frameRate * 10;
+    if(tempPosX > worldLimits[0]*S && tempPosX + width < worldLimits[1]*S) posX = tempPosX;
     return (int)posX;
   }
   // Rendering, depending on speed, direction, and animation step
   void render() {
+    imageMode(CENTER);
     if(speedX == 0) {
       if(effects[0].isPlaying()) effects[0].stop();
 
-      if(facingRight) image(images[4], width / 2 - playerWidth/2, height - playerHeight*1.3, playerWidth, playerHeight);
+      if(facingRight) image(images[4], width / 2, height - playerHeight*0.8, playerWidth, playerHeight);
       else {
         pushMatrix();
         scale(-1, 1);
-        image(images[4], -(width / 2 + playerWidth/2 - 10), height - playerHeight*1.3, playerWidth, playerHeight);
+        image(images[4], -width / 2, height - playerHeight*0.8, playerWidth, playerHeight);
         popMatrix();
       }
     } else {
@@ -59,17 +61,18 @@ class Player {
         lastTime = millis();
       }
       if(speedX > 0) {
-        image(images[activeImg], width / 2 - playerWidth/2, height - playerHeight*1.3, playerWidth, playerHeight);
+        image(images[activeImg], width / 2, height - playerHeight*0.8, playerWidth, playerHeight);
         facingRight = true;
       } else {
         pushMatrix();
         scale(-1, 1);
-        image(images[activeImg], -(width / 2 + playerWidth/2 - 10), height - playerHeight*1.3, playerWidth, playerHeight);
+        image(images[activeImg], -width / 2, height - playerHeight*0.8, playerWidth, playerHeight);
         popMatrix();
         facingRight = false;
       }
     }
 
-    if(activeBubble != -1) image(interactionBubbles[activeBubble], width / 2 - 30, height - 400, width / 24, width / 24);
+    if(activeBubble != -1) image(interactionBubbles[activeBubble], width / 2 + 40, height - 600, interactionBubbles[0].width*S, interactionBubbles[0].width*S);
+    imageMode(CORNER);
   }
 }

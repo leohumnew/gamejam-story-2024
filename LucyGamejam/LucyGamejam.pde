@@ -33,6 +33,7 @@ SoundFile effects[];
 // GAME VARIABLES //
 LevelManager activeLevel;
 Player player;
+int[][] worldLimits = {{-300, 1800}, {-210, 660}};
 
 // MAIN FUNCTIONS //
 void settings() {
@@ -56,7 +57,7 @@ void draw(){
   if (stage == -2) drawSettings(); // Settings
   else if (stage == -1) image(loading, 0, 0, width, height); // Loading screen
   else if (stage == 0) drawMenu(); // Main menu
-  else if (stage >= 1) drawGame(1); // Game
+  else if (stage >= 1) drawGame(stage); // Game
 
   fadeManager.update(); // Update fade
   debugUI.render();
@@ -73,7 +74,7 @@ void drawMenu(){
 }
 
 void drawGame(int level){
-  activeLevel.render(player.update());
+  activeLevel.render(player.update(worldLimits[level-1]));
   player.render();
   activeLevel.renderForeground();
 }
@@ -101,14 +102,14 @@ void mouseClicked() {
 }
 
 void keyPressed() {
-  if (stage >= 0) {
+  if (stage > 0) {
     activeLevel.keyPress();
     player.keyPress();
   }
 }
 
 void keyReleased() {
-  if (stage >= 0) player.keyRelease();
+  if (stage > 0) player.keyRelease();
 }
 
 Consumer<Integer> playerEmotion = i -> {
@@ -122,7 +123,7 @@ void loadAssets(){
   interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 256, 32, 8, 1);
   // Level 0: Village
   mainLevelLayers[0][0] = Utilities.loadImagePng(this, "Ground.png", 240, 29);
-  mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 2880, 502);
+  mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 360, 62);
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 2880, 804);
   levelItems[0] = new PImage[23];
   levelItems[0][0] = Utilities.loadImagePng(this, "School.png", 216, 188);
@@ -138,6 +139,7 @@ void loadAssets(){
   // Level 2: School
   mainLevelLayers[1][0] = mainLevelLayers[0][0];
   mainLevelLayers[1][1] = null;
+  //mainLevelLayers[1][1] = Utilities.loadImagePng(this, "WindowBG.png", 255, 57);
   mainLevelLayers[1][2] = mainLevelLayers[0][2];
   levelItems[1] = new PImage[3];
   levelItems[1][0] = Utilities.loadImagePng(this, "SchoolInside.png", 858, 135);
