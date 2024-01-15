@@ -38,7 +38,7 @@ class Player {
     if(activeBubble != -1 && millis() > bubbleTime + 2000) activeBubble = -1;
 
     tempPosX = posX + speedX / frameRate * 10;
-    if(tempPosX > worldLimits[0]*S && tempPosX + width < worldLimits[1]*S) posX = tempPosX;
+    if(tempPosX + width/2 > worldLimits[0]*S && tempPosX + width/2 < worldLimits[1]*S) posX = tempPosX;
     return (int)posX;
   }
   // Rendering, depending on speed, direction, and animation step
