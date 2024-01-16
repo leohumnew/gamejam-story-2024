@@ -18,6 +18,9 @@ class LevelManager {
     this.foregroundItems = foregroundItems;
     this.foregroundItemPositions = foregroundItemPositions;
     this.interactables = interactables;
+    for(Interactable interactable : interactables.values()) {
+      interactable.parentInteractablesArray = this.interactables;
+    }
     bgYPos[0] = height - (mainLayers[0] == null ? 0 : mainLayers[0].height*S);
     bgYPos[1] = bgYPos[0] - (mainLayers[1] == null ? 0 : mainLayers[1].height - 3)*S;
   }

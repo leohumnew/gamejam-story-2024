@@ -1,5 +1,7 @@
 import processing.sound.*;
-final int S = 8, FS = 10;
+SoundManager soundManager;
+final int S = 8, FS = 10, LVL_NUM = 4;
+final byte NEUTRAL = 0, BRAVERY = 1, SADNESS = 2, FEAR = 3, ANGER = 4, LOVE = 5, PEACE = 6, HEALING = 7, LOCKED = 8;
 
 // GENERAL / MENU VARIABLES //
 int stage = -1; // -2 = Settings, -1 = Loading, 0 = Menu, 1 = Game
@@ -8,9 +10,9 @@ UIManager menuUI = new UIManager();
 UIManager debugUI = new UIManager();
 PImage loading;
 PImage ui[], interactionBubbles[], bird[], extraImages[];
-PImage[][] mainLevelLayers = new PImage[3][5];
-PImage[][] levelItems = new PImage[3][];
-PImage[][] levelForegroundItems = new PImage[3][];
+PImage[][] mainLevelLayers = new PImage[LVL_NUM][5];
+PImage[][] levelItems = new PImage[LVL_NUM][];
+PImage[][] levelForegroundItems = new PImage[LVL_NUM][];
 // 0 = Village, 1 = School, 2 = Home, 3 = Forest
 float[][][] itemPositions = {
   { // 0 = Highschool, 1-3 = MC Houses, 4-12 = Houses, 13-14 = Bushes, 15-17 = Big trees, 18-20 = Trees, 21-22 = Doors, 23 = Bike
@@ -26,17 +28,21 @@ float[][][] itemPositions = {
     {-200.001},{253.4},{315.4},{113.42},{-194.001}
   },{
     {-10.001},{60.39},{385.3},{444.3},{489.36},{367.3},{236.39},{175.39},{-160, 580},{-70,575}
+  },{ // 0-1 = Bushes, 2-4 = Big trees, 5-7 = Trees
+    {-350, -100, 50, 200, 400},{-200, 100, 300, 500, 700},
+    {-300, 600},{-20, 130},{-500, 250},
+    {100},{-400, -580},{50, 300}
   }
 }; 
 // 0 = Trees, 1 = Bushes
-int[][][] foregroundItemPositions = {{{800},{-110, 1380}},{},{{470},{-110, 645}}};
-HashMap<Integer, Interactable>[] interactables = new HashMap[3];
+int[][][] foregroundItemPositions = {{{800},{-110, 1380}},{},{{470},{-110, 645}},{{-400, 100},{-200, 250},{-320,350}}};
+HashMap<Integer, Interactable>[] interactables = new HashMap[LVL_NUM];
 SoundFile effects[];
 
 // GAME VARIABLES //
 LevelManager activeLevel;
 Player player;
-int[][] worldLimits = {{-230, 1750}, {-176, 560}, {15, 532}};
+int[][] worldLimits = {{-230, 1750}, {-176, 560}, {15, 532}, {-800, 800}};
 
 // MAIN FUNCTIONS //
 void settings() {
@@ -63,6 +69,7 @@ void draw(){
   else if (stage >= 1) drawGame(stage); // Game
 
   fadeManager.update(); // Update fade
+  if(soundManager != null) soundManager.update(); // Update sound manager
   debugUI.render();
 }
 
@@ -105,6 +112,7 @@ Consumer<Integer> changeStage = i -> {
 };
 Consumer<Integer> fadeStage = i -> {
   fadeManager.fade(changeStage, i);
+  soundManager.fadeTo(byte(i), 1000);
 };
 
 // INPUT //
@@ -123,7 +131,7 @@ void keyReleased() {
 }
 
 Consumer<Integer> playerEmotion = i -> {
-  player.setActiveBubble(i);
+  player.setActiveBubble(byte(i));
 };
 Consumer<Integer> dropItem = i -> {
   itemPositions[0][23][0] = i;
@@ -137,7 +145,7 @@ Consumer<PImage[]> rideBike = img -> {
 void loadAssets(){
   ui = new PImage[1];
   ui[0] = Utilities.loadImagePng(this, "Enter.png", 32, 32);
-  interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 256, 32, 8, 1);
+  interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 608, 32, 33, 1);
   // Level 0: Village
   mainLevelLayers[0][0] = Utilities.loadImagePng(this, "GroundPath.png", 240, 41);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 360, 62);
@@ -184,6 +192,17 @@ void loadAssets(){
   levelForegroundItems[2] = new PImage[2];
   levelForegroundItems[2][0] = Utilities.loadImagePng(this, "Piano.png", 67, 29);
   levelForegroundItems[2][1] = levelItems[0][13];
+  // Level 3: Forest
+  mainLevelLayers[3][0] = mainLevelLayers[2][0];
+  mainLevelLayers[3][1] = mainLevelLayers[0][1];
+  mainLevelLayers[3][2] = mainLevelLayers[0][2];
+  mainLevelLayers[3][3] = mainLevelLayers[0][3];
+  mainLevelLayers[3][4] = mainLevelLayers[0][4];
+  levelItems[3] = new PImage[8];
+  arrayCopy(levelItems[0], 13, levelItems[3], 0, 8);
+  levelForegroundItems[3] = new PImage[3];
+  arrayCopy(levelItems[0], 13, levelForegroundItems[3], 0, 2);
+  levelForegroundItems[3][2] = levelItems[0][18];
 
   // Load extra images
   extraImages = new PImage[3];
@@ -198,6 +217,15 @@ void loadAssets(){
   effects[0] = new SoundFile(this, "OutdoorSteps.wav");
   effects[0].rate(2);
 
+  // Prepare sound manager
+  SoundFile[] music = new SoundFile[5];
+  music[0] = new SoundFile(this, "SchoolMusic.wav");
+  music[1] = new SoundFile(this, "VillageMusic.wav");
+  music[2] = new SoundFile(this, "SchoolMusic.wav");
+  music[3] = new SoundFile(this, "SchoolMusic.wav");
+  music[4] = new SoundFile(this, "VillageMusic.wav");
+  soundManager = new SoundManager(music, this);
+
   // Prepare player
   player = new Player(Utilities.loadImagePng(this, "PlayerSpriteSheet.png", 256, 49, 8, 1));
   loadInteractables();
@@ -210,28 +238,31 @@ void loadAssets(){
 }
 
 void loadInteractables() {
+  // Emotions: 0: no action, 1: bravery, 2: sadness, 3: fear, 4: anger, 5: love, 6: peace, 7: healing, 8: locked
   PImage[] animImages;
   // Level 0: Village
   interactables[0] = new HashMap<Integer, Interactable>();
-  interactables[0].put(21, new Interactable(fadeStage, 2));
-  interactables[0].put(22, new Interactable(fadeStage, 3));
+  interactables[0].put(21, new Interactable(fadeStage, 2, null));
+  interactables[0].put(22, new Interactable(fadeStage, 3, null));
   animImages = Utilities.loadImagePng(this, "BikeSpriteSheet.png", 120, 48, 3, 1);
-  interactables[0].put(23, new Interactable(rideBike, animImages));
+  interactables[0].put(23, new Interactable(rideBike, animImages, null));
   // Level 1: School
   interactables[1] = new HashMap<Integer, Interactable>();
-  interactables[1].put(1, new Interactable(playerEmotion, 1));
-  interactables[1].put(2, new Interactable(playerEmotion, 2));
+  interactables[1].put(1, new Interactable(playerEmotion, 1, null));
+  interactables[1].put(2, new Interactable(playerEmotion, 2, null));
   animImages = Utilities.loadImagePng(this, "SchoolInsideDoorSpriteSheet.png", 324, 48, 6, 1);
-  interactables[1].put(3, new Interactable(playerEmotion, 2, animImages));
+  interactables[1].put(3, new Interactable(playerEmotion, 2, animImages, null));
   levelItems[1][3] = animImages[5];
-  interactables[1].put(4, new Interactable(fadeStage, 1));
+  interactables[1].put(4, new Interactable(fadeStage, 1, null));
   // Level 2: Home
   interactables[2] = new HashMap<Integer, Interactable>();
-  interactables[2].put(1, new Interactable(fadeStage, 1));
-  interactables[2].put(2, new Interactable(playerEmotion, 0));
-  interactables[2].put(3, new Interactable(playerEmotion, 4));
-  interactables[2].put(4, new Interactable(fadeStage, 3));
-  interactables[2].put(5, new Interactable(playerEmotion, 5));
-  interactables[2].put(6, new Interactable(playerEmotion, 6));
-  interactables[2].put(7, new Interactable(playerEmotion, 7));
+  interactables[2].put(1, new Interactable(fadeStage, 1, null));
+  interactables[2].put(2, new Interactable(playerEmotion, 0, new byte[][][]{{{},{FEAR,2},{}}, {{},{SADNESS,1},{}}, {null}}));
+  interactables[2].put(3, new Interactable(playerEmotion, 4, new byte[][][]{{null}}));
+  interactables[2].put(4, new Interactable(fadeStage, 4, null));
+  interactables[2].put(5, new Interactable(playerEmotion, 5, new byte[][][]{{{},{LOVE,1},{2}}, {null}}));
+  interactables[2].put(6, new Interactable(playerEmotion, 6, new byte[][][]{{null}}));
+  interactables[2].put(7, new Interactable(playerEmotion, 7, new byte[][][]{{{},{FEAR,0},{}}}));
+  // Level 3: Forest
+  interactables[3] = new HashMap<Integer, Interactable>();
 }

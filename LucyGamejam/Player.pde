@@ -1,12 +1,12 @@
 class Player {
-  private float[] posX = {-1, 65, -170, 70};
+  private float[] posX = {-1, 65, -170, 70, 0};
   private float tempPosX = 0;
   private int level = 0, speedX = 0, speedMultiplier = 1;
   private PImage[] images, backupImages;
   private int imgTime = 0, activeImg = 0, activeBubble = -1, bubbleTime = 0, activeAction = -1, animFrames = 4;
   private boolean facingRight = true;
   private int playerWidth, playerHeight;
-  private int lastChoice = -1;
+  private byte lastChoice = -2;
   private Consumer<Integer> actionEndCallback = null;
 
   Player(PImage[] images) {
@@ -22,8 +22,8 @@ class Player {
 
   // Inputs
   boolean keyPress() {
-    if (key == 'a' || keyCode == LEFT) speedX = -32 * speedMultiplier;
-    else if (key == 'd' || keyCode == RIGHT) speedX = 32 * speedMultiplier;
+    if (key == 'a' || keyCode == LEFT) speedX = -35 * speedMultiplier;
+    else if (key == 'd' || keyCode == RIGHT) speedX = 35 * speedMultiplier;
     else if ((keyCode == ENTER || key == 'e') && backupImages != null) resetPlayerAction();
     else return false;
 
@@ -36,9 +36,11 @@ class Player {
   }
 
   // Interactions
-  void setActiveBubble(int activeBubble) {
+  void setActiveBubble(byte activeBubble) {
+    // 0: no action, 1: bravery, 2: sadness, 3: fear, 4: anger, 5: love, 6: peace, 7: healing, 8: locked
     this.activeBubble = activeBubble;
     bubbleTime = millis();
+    lastChoice = activeBubble;
   }
 
   void setActiveAction(int action, PImage[] actionImg) {
