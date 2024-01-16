@@ -8,6 +8,7 @@ class LevelManager {
   private float[][] extraPositions;
   private NPC[] npcs = new NPC[0];
   private HashMap<Integer, Interactable> interactables;
+  private ArrayList<Interactable> pendingInteractions = new ArrayList<Interactable>();
 
   LevelManager(int level, PImage mainLayers[], PImage staticItems[], float[][] itemPositions, PImage foregroundItems[], int[][] foregroundItemPositions, HashMap<Integer, Interactable> interactables) {
     this.level = level;
@@ -110,9 +111,22 @@ class LevelManager {
       for(int i = 0; i < staticItems.length; i++) {
         for(float pos : itemPositions[i]) {
           if(interactables.containsKey(i) && (posX + width/2)/S > floor(pos) && (posX + width/2)/S < floor(pos) + staticItems[i].width) {
-            interactables.get(i).interact();
+            pendingInteractions.add(interactables.get(i));
           }
         }
+      }
+      // Check if any pending interactions are high priority
+      for(Interactable interactable : pendingInteractions) {
+        if(interactable.getPriority() == 1) {
+          interactable.interact();
+          pendingInteractions.clear();
+          return;
+        }
+      }
+      // If not, interact with the first one
+      if(pendingInteractions.size() > 0) {
+        pendingInteractions.get(0).interact();
+        pendingInteractions.clear();
       }
     }
   }

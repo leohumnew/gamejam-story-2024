@@ -13,14 +13,15 @@ PImage[][] levelItems = new PImage[3][];
 PImage[][] levelForegroundItems = new PImage[3][];
 // 0 = Village, 1 = School, 2 = Home, 3 = Forest
 float[][][] itemPositions = {
-  { // 0 = Highschool, 1-3 = MC Houses, 4-12 = Houses, 13-14 = Bushes, 15-17 = Big trees, 18-20 = Trees, 20-21 = Doors
+  { // 0 = Highschool, 1-3 = MC Houses, 4-12 = Houses, 13-14 = Bushes, 15-17 = Big trees, 18-20 = Trees, 21-22 = Doors, 23 = Bike
     {1375},
     {45},{-1},{-1},
     {400},{-1},{200},{1100},{-275},{1225},{800, 1600},{-150},{925},
     {175},{600, 1050},
     {300},{1700},{-400},
     {0},{550},{750},
-    {1449},{113}
+    {1449},{113},
+    {150}
   },{ // 0 = School, 1 = Bench, 2 = Tree, 3 = Class door, 4 = Exit door
     {-200.001},{253.4},{315.4},{113.42},{-194.001}
   },{
@@ -113,8 +114,7 @@ void mouseClicked() {
 
 void keyPressed() {
   if (stage > 0) {
-    activeLevel.keyPress();
-    player.keyPress();
+    if(!player.keyPress()) activeLevel.keyPress();
   }
 }
 
@@ -124,6 +124,13 @@ void keyReleased() {
 
 Consumer<Integer> playerEmotion = i -> {
   player.setActiveBubble(i);
+};
+Consumer<Integer> dropItem = i -> {
+  itemPositions[0][23][0] = i;
+};
+Consumer<PImage[]> rideBike = img -> {
+  itemPositions[0][23][0] = -1;
+  player.setActiveAction(0, img, dropItem);
 };
 
 // LOAD ASSETS //
@@ -137,7 +144,7 @@ void loadAssets(){
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 358, 100);
   mainLevelLayers[0][3] = Utilities.loadImagePng(this, "Sunset.png", 240, 135);
   mainLevelLayers[0][4] = Utilities.loadImagePng(this, "NightSky.png", 240, 135);
-  levelItems[0] = new PImage[23];
+  levelItems[0] = new PImage[24];
   levelItems[0][0] = Utilities.loadImagePng(this, "School.png", 216, 188);
   arrayCopy(Utilities.loadImagePng(this, "HousesSpriteSheet.png", 480, 327, 4, 3), 0, levelItems[0], 1, 12);
   arrayCopy(Utilities.loadImagePng(this, "BushesSpriteSheet.png", 96, 34, 2, 1), 0, levelItems[0], 13, 2);
@@ -145,6 +152,7 @@ void loadAssets(){
   arrayCopy(Utilities.loadImagePng(this, "tree.png", 189, 86, 3, 1), 0, levelItems[0], 18, 3);
   levelItems[0][21] = Utilities.loadImagePng(this, "SchoolDoor.png", 68, 69);
   levelItems[0][22] = Utilities.loadImagePng(this, "HouseDoor.png", 34, 46);
+  levelItems[0][23] = Utilities.loadImagePng(this, "Bike.png", 40, 27);
   levelForegroundItems[0] = new PImage[2];
   levelForegroundItems[0][0] = levelItems[0][19];
   levelForegroundItems[0][1] = levelItems[0][13];
@@ -202,18 +210,20 @@ void loadAssets(){
 }
 
 void loadInteractables() {
-  PImage[] doorAnim;
+  PImage[] animImages;
   // Level 0: Village
   interactables[0] = new HashMap<Integer, Interactable>();
   interactables[0].put(21, new Interactable(fadeStage, 2));
   interactables[0].put(22, new Interactable(fadeStage, 3));
+  animImages = Utilities.loadImagePng(this, "BikeSpriteSheet.png", 120, 48, 3, 1);
+  interactables[0].put(23, new Interactable(rideBike, animImages));
   // Level 1: School
   interactables[1] = new HashMap<Integer, Interactable>();
   interactables[1].put(1, new Interactable(playerEmotion, 1));
   interactables[1].put(2, new Interactable(playerEmotion, 2));
-  doorAnim = Utilities.loadImagePng(this, "SchoolInsideDoorSpriteSheet.png", 324, 48, 6, 1);
-  interactables[1].put(3, new Interactable(playerEmotion, 3, doorAnim));
-  levelItems[1][3] = doorAnim[5];
+  animImages = Utilities.loadImagePng(this, "SchoolInsideDoorSpriteSheet.png", 324, 48, 6, 1);
+  interactables[1].put(3, new Interactable(playerEmotion, 2, animImages));
+  levelItems[1][3] = animImages[5];
   interactables[1].put(4, new Interactable(fadeStage, 1));
   // Level 2: Home
   interactables[2] = new HashMap<Integer, Interactable>();

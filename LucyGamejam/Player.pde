@@ -1,12 +1,13 @@
 class Player {
   private float[] posX = {-1, 65, -170, 70};
   private float tempPosX = 0;
-  private int level = 0, speedX = 0;
-  private PImage[] images;
-  private int imgTime = 0, activeImg = 0, activeBubble = -1, bubbleTime = 0;
+  private int level = 0, speedX = 0, speedMultiplier = 1;
+  private PImage[] images, backupImages;
+  private int imgTime = 0, activeImg = 0, activeBubble = -1, bubbleTime = 0, activeAction = -1, animFrames = 4;
   private boolean facingRight = true;
   private int playerWidth, playerHeight;
   private int lastChoice = -1;
+  private Consumer<Integer> actionEndCallback = null;
 
   Player(PImage[] images) {
     this.images = images;
@@ -20,9 +21,13 @@ class Player {
   }
 
   // Inputs
-  void keyPress() {
-    if (key == 'a' || keyCode == LEFT) speedX = -200;
-    else if (key == 'd' || keyCode == RIGHT) speedX = 300;
+  boolean keyPress() {
+    if (key == 'a' || keyCode == LEFT) speedX = -32 * speedMultiplier;
+    else if (key == 'd' || keyCode == RIGHT) speedX = 32 * speedMultiplier;
+    else if ((keyCode == ENTER || key == 'e') && backupImages != null) resetPlayerAction();
+    else return false;
+
+    return true;
   }
 
   void keyRelease() {
@@ -34,6 +39,28 @@ class Player {
   void setActiveBubble(int activeBubble) {
     this.activeBubble = activeBubble;
     bubbleTime = millis();
+  }
+
+  void setActiveAction(int action, PImage[] actionImg) {
+    animFrames = 2;
+    backupImages = images;
+    images = actionImg;
+    playerWidth = images[0].width*S;
+    playerHeight = images[0].height*S;
+    if(action == 0) speedMultiplier = 6;
+  }
+  void setActiveAction(int action, PImage[] actionImg, Consumer<Integer> actionCallback) {
+    setActiveAction(action, actionImg);
+    actionEndCallback = actionCallback;
+  }
+  void resetPlayerAction() {
+    animFrames = 4;
+    images = backupImages;
+    backupImages = null;
+    playerWidth = images[0].width*S;
+    playerHeight = images[0].height*S;
+    if(actionEndCallback != null) actionEndCallback.accept((int)((posX[level] + width/2)/S));
+    speedMultiplier = 1;
   }
 
   // Position update
@@ -50,26 +77,26 @@ class Player {
     if(speedX == 0) {
       if(effects[0].isPlaying()) effects[0].stop();
 
-      if(facingRight) image(images[4], width / 2, height - playerHeight*0.8, playerWidth, playerHeight);
+      if(facingRight) image(images[0], width / 2, height - playerHeight*0.8, playerWidth, playerHeight);
       else {
         pushMatrix();
         scale(-1, 1);
-        image(images[4], -width / 2, height - playerHeight*0.8, playerWidth, playerHeight);
+        image(images[0], -width / 2, height - playerHeight*0.8, playerWidth, playerHeight);
         popMatrix();
       }
     } else {
       if(!effects[0].isPlaying()) effects[0].loop();
       if(millis() > imgTime + 300) {
-        activeImg = (activeImg + 1) % 4;
+        activeImg = (activeImg + 1) % animFrames;
         imgTime = millis();
       }
       if(speedX > 0) {
-        image(images[activeImg], width / 2, height - playerHeight*0.8, playerWidth, playerHeight);
+        image(images[activeImg+1], width / 2, height - playerHeight*0.8, playerWidth, playerHeight);
         facingRight = true;
       } else {
         pushMatrix();
         scale(-1, 1);
-        image(images[activeImg], -width / 2, height - playerHeight*0.8, playerWidth, playerHeight);
+        image(images[activeImg+1], -width / 2, height - playerHeight*0.8, playerWidth, playerHeight);
         popMatrix();
         facingRight = false;
       }
