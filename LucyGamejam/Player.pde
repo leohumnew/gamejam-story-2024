@@ -1,9 +1,9 @@
 class Player {
-  private float[] posX = {-1, 65, -170, 70, 0};
+  private float[] posX = {-1, 140, -170, 70, 0};
   private float tempPosX = 0;
   private int level = 0, speedX = 0, speedMultiplier = 1;
   private PImage[] images, backupImages;
-  private int imgTime = 0, activeImg = 0, activeBubble = -2, bubbleTime = 0, bubbleAnimTime = 0, bubbleDuration = 2800, activeAction = -1, animFrames = 4;
+  private int imgTime = 0, activeImg = 0, activeBubble = -2, bubbleTime = 0, bubbleAnimTime = 0, bubbleDuration = 2500, activeAction = -1, animFrames = 4;
   private boolean facingRight = true;
   private int playerWidth, playerHeight;
   private byte bubbleAnimStep = 0, lastChoice = -2;
@@ -42,7 +42,7 @@ class Player {
     this.activeBubble = activeBubble - 1; // Subtract one so as to start animation ones from 0
     bubbleTime = millis();
     bubbleDuration = this.activeBubble == -1 ? 700 : 2500;
-    bubbleAnimTime = millis(); //<>// //<>//
+    bubbleAnimTime = millis();
   }
 
   void setActiveAction(int action, PImage[] actionImg) {

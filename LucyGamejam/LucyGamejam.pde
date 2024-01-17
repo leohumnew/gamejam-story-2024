@@ -5,6 +5,7 @@ final byte NEUTRAL = 0, FEAR = 1, ANGER = 2, SADNESS = 3, BRAVERY = 4, LOVE = 5,
 
 // GENERAL / MENU VARIABLES //
 int stage = -1; // -2 = Settings, -1 = Loading, 0 = Menu, 1 = Game
+int timeOfDay = 0;
 FadeManager fadeManager = new FadeManager(1000);
 UIManager menuUI = new UIManager();
 UIManager debugUI = new UIManager();
@@ -130,6 +131,7 @@ void keyReleased() {
   if (stage > 0) player.keyRelease();
 }
 
+// INTERACTABLE FUNCTIONS //
 Consumer<Integer> playerEmotion = i -> {
   player.setActiveBubble(byte(i));
 };
@@ -139,6 +141,11 @@ Consumer<Integer> dropItem = i -> {
 Consumer<PImage[]> rideBike = img -> {
   itemPositions[0][36][0] = -1;
   player.setActiveAction(0, img, dropItem);
+};
+Consumer<Integer> changeTimeVar = i -> timeOfDay = i;
+Consumer<Integer> advanceTime = i -> {
+  fadeManager.fade(changeTimeVar, i);
+  activeLevel.advanceTime();
 };
 
 // LOAD ASSETS //
@@ -240,41 +247,54 @@ void loadAssets(){
 void loadInteractables() {
   // Emotions: NO ACTION = 0, FEAR = 1, ANGER = 2, SADNESS = 3, BRAVERY = 4, LOVE = 5, PEACE = 6, HEALING = 7, LOCKED = 8;
   PImage[] animImages;
-  // Level 0: Village
+  //---- Level 0: Village ----//
   interactables[0] = new HashMap<Integer, Interactable>();
   interactables[0].put(34, new Interactable(fadeStage, 2, null));
   interactables[0].put(35, new Interactable(fadeStage, 3, null));
   animImages = Utilities.loadImagePng(this, "BikeSpriteSheet.png", 120, 48, 3, 1);
   interactables[0].put(36, new Interactable(rideBike, animImages, null));
-  // Level 1: School
+  //---- Level 1: School ----//
   interactables[1] = new HashMap<Integer, Interactable>();
   interactables[1].put(1, new Interactable(playerEmotion, 1, null));
   interactables[1].put(2, new Interactable(playerEmotion, 2, null));
   animImages = Utilities.loadImagePng(this, "SchoolInsideDoorSpriteSheet.png", 324, 48, 6, 1);
-  interactables[1].put(3, new Interactable(playerEmotion, 2, animImages, null));
+  interactables[1].put(3, new Interactable(playerEmotion, 2, animImages, new byte[][][]{ // Class door
+    {{},{FEAR,0},{4}}, {null} // Morning 2
+  })); 
   levelItems[1][3] = animImages[5];
-  interactables[1].put(4, new Interactable(fadeStage, 1, null));
-  // Level 2: Home
+  interactables[1].put(4, new Interactable(fadeStage, 1, new byte[][][]{ // Exit door
+    {{},{LOCKED,0},{}}, {{},{},{}}, {null} // Morning 2
+  }));
+  //---- Level 2: Home ----//
   interactables[2] = new HashMap<Integer, Interactable>();
   interactables[2].put(1, new Interactable(fadeStage, 1, new byte[][][]{ // House door
-    {{},{LOCKED,0},{}} // Evening 1
+    {{},{LOCKED,0},{}}, {null}, // Evening 1
+    {{},{},{}} // Morning 2
   }));
-  interactables[2].put(2, new Interactable(playerEmotion, 0, new byte[][][]{ // Bed
-    {{},{FEAR,0},{}}, {{},{SADNESS,1},{}}, {null} // Evening 1
+  interactables[2].put(2, new Interactable(advanceTime, 8, new byte[][][]{ // Bed
+    {{},{FEAR,0},{}}, {{},{SADNESS,1},{}}, {null}, // Evening 1
+    {null} // Morning 2
   }));
-  interactables[2].put(3, new Interactable(playerEmotion, 4, new byte[][][]{{null}}));
+  interactables[2].put(3, new Interactable(new byte[][][]{ // Desk
+    {null}, // Evening 1
+    {null} // Morning 2
+  }));
   interactables[2].put(4, new Interactable(fadeStage, 4, new byte[][][]{ // Window
-    {{LOVE},{BRAVERY,1},{}}, {null} // Evening 1
+    {{LOVE},{BRAVERY,1},{}}, {null}, // Evening 1
+    {null} // Morning 2
   }));
-  interactables[2].put(5, new Interactable(playerEmotion, 5, new byte[][][]{ // Cage
-    {{},{LOVE,1},{2}}, {null} // Evening 1
+  interactables[2].put(5, new Interactable(new byte[][][]{ // Cage
+    {{},{LOVE,1},{2}}, {null}, // Evening 1
+    {null} // Morning 2
   }));
-  interactables[2].put(6, new Interactable(playerEmotion, 6, new byte[][][]{ // Kitchen door
-    {null}
+  interactables[2].put(6, new Interactable(new byte[][][]{ // Kitchen door
+    {null}, // Evening 1
+    {null} // Morning 2
   }));
-  interactables[2].put(7, new Interactable(playerEmotion, 7, new byte[][][]{ // Living room door
-    {{},{FEAR,0},{}} // Evening 1
+  interactables[2].put(7, new Interactable(new byte[][][]{ // Living room door
+    {{},{FEAR,0},{}}, {null}, // Evening 1
+    {null} // Morning 2
   }));
-  // Level 3: Forest
+  //---- Level 3: Forest ----//
   interactables[3] = new HashMap<Integer, Interactable>();
 }

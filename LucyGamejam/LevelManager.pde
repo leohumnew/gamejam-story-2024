@@ -3,7 +3,7 @@ class LevelManager {
   private PImage[] mainLayers, staticItems, foregroundItems, extraLayers;
   private float[][] itemPositions;
   private int[][] foregroundItemPositions;
-  int posX = 0, timeOfDay = 22;
+  int posX = 0;
   private int[] bgYPos = new int[2];
   private float[][] extraPositions;
   private NPC[] npcs = new NPC[0];
@@ -32,8 +32,10 @@ class LevelManager {
     this.npcs = npcs;
   }
 
-  public void setTimeOfDay(int timeOfDay) {
-    this.timeOfDay = timeOfDay;
+  public void advanceTime() {
+    for(Interactable interactable : interactables.values()) {
+      interactable.advanceTime();
+    }
   }
 
   // Rendering the level
@@ -41,15 +43,15 @@ class LevelManager {
     this.posX = posX;
     // Set sky colour and tint based on time
     noTint();
-    if(timeOfDay > 6 && timeOfDay < 18) {
+    if(timeOfDay > 6 && timeOfDay < 16) {
       background(#73CEF7);
       image(mainLayers[2], 0, 0, mainLayers[2].width*S, mainLayers[2].height*S);
     }
-    else if(timeOfDay >= 18 && timeOfDay < 20) {
+    else if(timeOfDay >= 16 && timeOfDay < 24) {
       image(mainLayers[3], 0, 0, mainLayers[3].width*S, mainLayers[3].height*S);
       tint(#240303);
     }
-    else if(timeOfDay >= 20 || timeOfDay < 6) {
+    else if(timeOfDay >= 0 || timeOfDay < 6) {
       image(mainLayers[4], 0, 0, mainLayers[4].width*S, mainLayers[4].height*S);
       tint(#373d6d);
     }
