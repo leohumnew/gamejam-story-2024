@@ -256,12 +256,16 @@ void loadInteractables() {
   interactables[1].put(4, new Interactable(fadeStage, 1, null));
   // Level 2: Home
   interactables[2] = new HashMap<Integer, Interactable>();
-  interactables[2].put(1, new Interactable(fadeStage, 1, null));
+  interactables[2].put(1, new Interactable(fadeStage, 1, new byte[][][]{ // House door
+    {{},{LOCKED,0},{}} // Evening 1
+  }));
   interactables[2].put(2, new Interactable(playerEmotion, 0, new byte[][][]{ // Bed
     {{},{FEAR,0},{}}, {{},{SADNESS,1},{}}, {null} // Evening 1
   }));
   interactables[2].put(3, new Interactable(playerEmotion, 4, new byte[][][]{{null}}));
-  interactables[2].put(4, new Interactable(fadeStage, 4, null));
+  interactables[2].put(4, new Interactable(fadeStage, 4, new byte[][][]{ // Window
+    {{LOVE},{BRAVERY,1},{}}, {null} // Evening 1
+  }));
   interactables[2].put(5, new Interactable(playerEmotion, 5, new byte[][][]{ // Cage
     {{},{LOVE,1},{2}}, {null} // Evening 1
   }));

@@ -32,7 +32,7 @@ class Interactable {
         callbackImages.accept(images);
       }
 
-      if(emotionProperties != null) {
+      if(emotionProperties != null && emotionProperties[storyStage][1] != null) { // If the interactable has a story stage to advance to
         player.setActiveBubble(emotionProperties[storyStage][1][0]);
         for(int i = 0; i < emotionProperties[storyStage][2].length; i++) {
           parentInteractablesArray.get(int(emotionProperties[storyStage][2][i])).storyStage++;

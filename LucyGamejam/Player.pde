@@ -22,8 +22,8 @@ class Player {
 
   // Inputs
   boolean keyPress() {
-    if (key == 'a' || keyCode == LEFT) speedX = -35 * speedMultiplier;
-    else if (key == 'd' || keyCode == RIGHT) speedX = 35 * speedMultiplier;
+    if (key == 'a' || keyCode == LEFT) speedX = -40 * speedMultiplier;
+    else if (key == 'd' || keyCode == RIGHT) speedX = 40 * speedMultiplier;
     else if ((keyCode == ENTER || key == 'e') && backupImages != null) resetPlayerAction();
     else return false;
 
@@ -42,7 +42,7 @@ class Player {
     this.activeBubble = activeBubble - 1; // Subtract one so as to start animation ones from 0
     bubbleTime = millis();
     bubbleDuration = this.activeBubble == -1 ? 700 : 2500;
-    bubbleAnimTime = millis(); //<>//
+    bubbleAnimTime = millis(); //<>// //<>//
   }
 
   void setActiveAction(int action, PImage[] actionImg) {
@@ -51,7 +51,11 @@ class Player {
     images = actionImg;
     playerWidth = images[0].width*S;
     playerHeight = images[0].height*S;
-    if(action == 0) speedMultiplier = 6;
+    activeImg = 0;
+    if(action == 0) {
+      speedMultiplier = 5;
+      speedX *= speedMultiplier;
+    }
   }
   void setActiveAction(int action, PImage[] actionImg, Consumer<Integer> actionCallback) {
     setActiveAction(action, actionImg);
@@ -65,6 +69,10 @@ class Player {
     playerHeight = images[0].height*S;
     if(actionEndCallback != null) actionEndCallback.accept((int)((posX[level] + width/2)/S));
     speedMultiplier = 1;
+    if(keyPressed) { // TODO: Fix resetting speedX on dismount
+      if (key == 'a' || keyCode == LEFT) speedX = -40 * speedMultiplier;
+      else if (key == 'd' || keyCode == RIGHT) speedX = 40 * speedMultiplier;
+    }
   }
 
   // Position update
