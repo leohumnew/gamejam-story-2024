@@ -3,10 +3,10 @@ class Player {
   private float tempPosX = 0;
   private int level = 0, speedX = 0, speedMultiplier = 1;
   private PImage[] images, backupImages;
-  private int imgTime = 0, activeImg = 0, activeBubble = -1, bubbleTime = 0, activeAction = -1, animFrames = 4;
+  private int imgTime = 0, activeImg = 0, activeBubble = -2, bubbleTime = 0, bubbleAnimTime = 0, bubbleDuration = 2800, activeAction = -1, animFrames = 4;
   private boolean facingRight = true;
   private int playerWidth, playerHeight;
-  private byte lastChoice = -2;
+  private byte bubbleAnimStep = 0, lastChoice = -2;
   private Consumer<Integer> actionEndCallback = null;
 
   Player(PImage[] images) {
@@ -38,9 +38,11 @@ class Player {
   // Interactions
   void setActiveBubble(byte activeBubble) {
     // 0: no action, 1: bravery, 2: sadness, 3: fear, 4: anger, 5: love, 6: peace, 7: healing, 8: locked
-    this.activeBubble = activeBubble;
-    bubbleTime = millis();
     lastChoice = activeBubble;
+    this.activeBubble = activeBubble - 1; // Subtract one so as to start animation ones from 0
+    bubbleTime = millis();
+    bubbleDuration = this.activeBubble == -1 ? 700 : 2500;
+    bubbleAnimTime = millis(); //<>//
   }
 
   void setActiveAction(int action, PImage[] actionImg) {
@@ -67,12 +69,13 @@ class Player {
 
   // Position update
   int update(int[] worldLimits) {
-    if(activeBubble != -1 && millis() > bubbleTime + 2000) activeBubble = -1;
+    if(activeBubble != -2 && millis() > bubbleTime + bubbleDuration) activeBubble = -2;
 
     tempPosX = posX[level] + speedX / frameRate * 10;
     if(tempPosX + width/2 > worldLimits[0]*S && tempPosX + width/2 < worldLimits[1]*S) posX[level] = tempPosX;
     return (int)posX[level];
   }
+
   // Rendering, depending on speed, direction, and animation step
   void render() {
     imageMode(CENTER);
@@ -104,7 +107,17 @@ class Player {
       }
     }
 
-    if(activeBubble != -1) image(interactionBubbles[activeBubble], width / 2 + 40, height - 600, interactionBubbles[0].width*S, interactionBubbles[0].width*S);
+    pushStyle();
+    noTint();
+    if(activeBubble == -1) image(interactionBubbles[0], width / 2 + 60, height - 600, interactionBubbles[0].width*S, interactionBubbles[0].width*S);
+    else if(activeBubble >= 0) {
+      image(interactionBubbles[(activeBubble*4) + bubbleAnimStep + 1], width / 2 + 60, height - 600, interactionBubbles[0].width*S, interactionBubbles[0].width*S);
+      if(millis() > bubbleAnimTime + 200) {
+        bubbleAnimStep = (byte)((bubbleAnimStep + 1) % 4);
+        bubbleAnimTime = millis();
+      }
+    }
+    popStyle();
     imageMode(CORNER);
   }
 }

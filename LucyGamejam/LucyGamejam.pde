@@ -1,7 +1,7 @@
 import processing.sound.*;
 SoundManager soundManager;
 final int S = 8, FS = 10, LVL_NUM = 4;
-final byte NEUTRAL = 0, BRAVERY = 1, SADNESS = 2, FEAR = 3, ANGER = 4, LOVE = 5, PEACE = 6, HEALING = 7, LOCKED = 8;
+final byte NEUTRAL = 0, FEAR = 1, ANGER = 2, SADNESS = 3, BRAVERY = 4, LOVE = 5, PEACE = 6, HEALING = 7, LOCKED = 8;
 
 // GENERAL / MENU VARIABLES //
 int stage = -1; // -2 = Settings, -1 = Loading, 0 = Menu, 1 = Game
@@ -15,27 +15,27 @@ PImage[][] levelItems = new PImage[LVL_NUM][];
 PImage[][] levelForegroundItems = new PImage[LVL_NUM][];
 // 0 = Village, 1 = School, 2 = Home, 3 = Forest
 float[][][] itemPositions = {
-  { // 0 = Highschool, 1-3 = MC Houses, 4-12 = Houses, 13-14 = Bushes, 15-17 = Big trees, 18-20 = Trees, 21-22 = Doors, 23 = Bike
+  { // 0 = Highschool, 1-3 = MC Houses, 4-12 = Houses, 13-24 = Bushes, 25-27 = Big trees, 28-33 = Trees, 34-35 = Doors, 36 = Bike
     {1375},
     {45},{-1},{-1},
     {400},{-1},{200},{1100},{-275},{1225},{800, 1600},{-150},{925},
-    {175},{600, 1050},
+    {175},{1050},{600},{-200},{1750},{},{-100},{},{-500},{},{-700},{},
     {300},{1700},{-400},
-    {0},{550},{750},
+    {0},{},{750},{550},{},{},
     {1449},{113},
     {150}
   },{ // 0 = School, 1 = Bench, 2 = Tree, 3 = Class door, 4 = Exit door
     {-200.001},{253.4},{315.4},{113.42},{-194.001}
   },{
     {-10.001},{60.39},{385.3},{444.3},{489.36},{367.3},{236.39},{175.39},{-160, 580},{-70,575}
-  },{ // 0-1 = Bushes, 2-4 = Big trees, 5-7 = Trees
-    {-350, -100, 50, 200, 400},{-200, 100, 300, 500, 700},
+  },{ // 0-11 = Bushes, 12-14 = Big trees, 15-20 = Trees
+    {-350},{300},{-100},{200},{400},{50},{-200},{740},{700},{100},{500},{-630},
     {-300, 600},{-20, 130},{-500, 250},
-    {100},{-400, -580},{50, 300}
+    {100},{-580},{350},{-400},{50},{-690}
   }
 }; 
 // 0 = Trees, 1 = Bushes
-int[][][] foregroundItemPositions = {{{800},{-110, 1380}},{},{{470},{-110, 645}},{{-400, 100},{-200, 250},{-320,350}}};
+int[][][] foregroundItemPositions = {{{800},{-110, 1380}},{},{{470},{-110, 645}},{{100},{-200},{-320},{250},{-400},{350},{450},{-300}}};
 HashMap<Integer, Interactable>[] interactables = new HashMap[LVL_NUM];
 SoundFile effects[];
 
@@ -134,10 +134,10 @@ Consumer<Integer> playerEmotion = i -> {
   player.setActiveBubble(byte(i));
 };
 Consumer<Integer> dropItem = i -> {
-  itemPositions[0][23][0] = i;
+  itemPositions[0][36][0] = i;
 };
 Consumer<PImage[]> rideBike = img -> {
-  itemPositions[0][23][0] = -1;
+  itemPositions[0][36][0] = -1;
   player.setActiveAction(0, img, dropItem);
 };
 
@@ -145,22 +145,22 @@ Consumer<PImage[]> rideBike = img -> {
 void loadAssets(){
   ui = new PImage[1];
   ui[0] = Utilities.loadImagePng(this, "Enter.png", 32, 32);
-  interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 608, 32, 33, 1);
+  interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 1056, 32, 33, 1);
   // Level 0: Village
   mainLevelLayers[0][0] = Utilities.loadImagePng(this, "GroundPath.png", 240, 41);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 360, 62);
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 358, 100);
   mainLevelLayers[0][3] = Utilities.loadImagePng(this, "Sunset.png", 240, 135);
   mainLevelLayers[0][4] = Utilities.loadImagePng(this, "NightSky.png", 240, 135);
-  levelItems[0] = new PImage[24];
+  levelItems[0] = new PImage[37];
   levelItems[0][0] = Utilities.loadImagePng(this, "School.png", 216, 188);
   arrayCopy(Utilities.loadImagePng(this, "HousesSpriteSheet.png", 480, 327, 4, 3), 0, levelItems[0], 1, 12);
-  arrayCopy(Utilities.loadImagePng(this, "BushesSpriteSheet.png", 96, 34, 2, 1), 0, levelItems[0], 13, 2);
-  arrayCopy(Utilities.loadImagePng(this, "treeBig.png", 378, 172, 3, 1), 0, levelItems[0], 15, 3);
-  arrayCopy(Utilities.loadImagePng(this, "tree.png", 189, 86, 3, 1), 0, levelItems[0], 18, 3);
-  levelItems[0][21] = Utilities.loadImagePng(this, "SchoolDoor.png", 68, 69);
-  levelItems[0][22] = Utilities.loadImagePng(this, "HouseDoor.png", 34, 46);
-  levelItems[0][23] = Utilities.loadImagePng(this, "Bike.png", 40, 27);
+  arrayCopy(Utilities.loadImagePng(this, "BushesSpriteSheet.png", 192, 102, 4, 3), 0, levelItems[0], 13, 12);
+  arrayCopy(Utilities.loadImagePng(this, "treeBig.png", 378, 172, 3, 1), 0, levelItems[0], 25, 3);
+  arrayCopy(Utilities.loadImagePng(this, "tree.png", 189, 172, 3, 2), 0, levelItems[0], 28, 6);
+  levelItems[0][34] = Utilities.loadImagePng(this, "SchoolDoor.png", 68, 69);
+  levelItems[0][35] = Utilities.loadImagePng(this, "HouseDoor.png", 34, 46);
+  levelItems[0][36] = Utilities.loadImagePng(this, "Bike.png", 40, 27);
   levelForegroundItems[0] = new PImage[2];
   levelForegroundItems[0][0] = levelItems[0][19];
   levelForegroundItems[0][1] = levelItems[0][13];
@@ -198,11 +198,11 @@ void loadAssets(){
   mainLevelLayers[3][2] = mainLevelLayers[0][2];
   mainLevelLayers[3][3] = mainLevelLayers[0][3];
   mainLevelLayers[3][4] = mainLevelLayers[0][4];
-  levelItems[3] = new PImage[8];
-  arrayCopy(levelItems[0], 13, levelItems[3], 0, 8);
-  levelForegroundItems[3] = new PImage[3];
-  arrayCopy(levelItems[0], 13, levelForegroundItems[3], 0, 2);
-  levelForegroundItems[3][2] = levelItems[0][18];
+  levelItems[3] = new PImage[21];
+  arrayCopy(levelItems[0], 13, levelItems[3], 0, 21);
+  levelForegroundItems[3] = new PImage[7];
+  arrayCopy(levelItems[0], 13, levelForegroundItems[3], 0, 6);
+  levelForegroundItems[3][6] = levelItems[0][28];
 
   // Load extra images
   extraImages = new PImage[3];
@@ -227,25 +227,25 @@ void loadAssets(){
   soundManager = new SoundManager(music, this);
 
   // Prepare player
-  player = new Player(Utilities.loadImagePng(this, "PlayerSpriteSheet.png", 256, 49, 8, 1));
+  player = new Player(Utilities.loadImagePng(this, "PlayerSpriteSheet.png", 384, 49, 12, 1));
   loadInteractables();
 
   // Make menu UI
-  menuUI.add(new ImgButton(width/2, height/2, 300, 100, Utilities.loadImagePng(this, "PlayButton.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonHover.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonPush.png", 300, 100), fadeStage, 1));
+  menuUI.add(new ImgButton(width/2, height/2, 300, 100, Utilities.loadImagePng(this, "PlayButton.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonHover.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonPush.png", 300, 100), fadeStage, 3));
   debugUI.add(new FPSCounter(100,100));
 
   fadeStage.accept(0);
 }
 
 void loadInteractables() {
-  // Emotions: 0: no action, 1: bravery, 2: sadness, 3: fear, 4: anger, 5: love, 6: peace, 7: healing, 8: locked
+  // Emotions: NO ACTION = 0, FEAR = 1, ANGER = 2, SADNESS = 3, BRAVERY = 4, LOVE = 5, PEACE = 6, HEALING = 7, LOCKED = 8;
   PImage[] animImages;
   // Level 0: Village
   interactables[0] = new HashMap<Integer, Interactable>();
-  interactables[0].put(21, new Interactable(fadeStage, 2, null));
-  interactables[0].put(22, new Interactable(fadeStage, 3, null));
+  interactables[0].put(34, new Interactable(fadeStage, 2, null));
+  interactables[0].put(35, new Interactable(fadeStage, 3, null));
   animImages = Utilities.loadImagePng(this, "BikeSpriteSheet.png", 120, 48, 3, 1);
-  interactables[0].put(23, new Interactable(rideBike, animImages, null));
+  interactables[0].put(36, new Interactable(rideBike, animImages, null));
   // Level 1: School
   interactables[1] = new HashMap<Integer, Interactable>();
   interactables[1].put(1, new Interactable(playerEmotion, 1, null));
@@ -257,12 +257,20 @@ void loadInteractables() {
   // Level 2: Home
   interactables[2] = new HashMap<Integer, Interactable>();
   interactables[2].put(1, new Interactable(fadeStage, 1, null));
-  interactables[2].put(2, new Interactable(playerEmotion, 0, new byte[][][]{{{},{FEAR,2},{}}, {{},{SADNESS,1},{}}, {null}}));
+  interactables[2].put(2, new Interactable(playerEmotion, 0, new byte[][][]{ // Bed
+    {{},{FEAR,0},{}}, {{},{SADNESS,1},{}}, {null} // Evening 1
+  }));
   interactables[2].put(3, new Interactable(playerEmotion, 4, new byte[][][]{{null}}));
   interactables[2].put(4, new Interactable(fadeStage, 4, null));
-  interactables[2].put(5, new Interactable(playerEmotion, 5, new byte[][][]{{{},{LOVE,1},{2}}, {null}}));
-  interactables[2].put(6, new Interactable(playerEmotion, 6, new byte[][][]{{null}}));
-  interactables[2].put(7, new Interactable(playerEmotion, 7, new byte[][][]{{{},{FEAR,0},{}}}));
+  interactables[2].put(5, new Interactable(playerEmotion, 5, new byte[][][]{ // Cage
+    {{},{LOVE,1},{2}}, {null} // Evening 1
+  }));
+  interactables[2].put(6, new Interactable(playerEmotion, 6, new byte[][][]{ // Kitchen door
+    {null}
+  }));
+  interactables[2].put(7, new Interactable(playerEmotion, 7, new byte[][][]{ // Living room door
+    {{},{FEAR,0},{}} // Evening 1
+  }));
   // Level 3: Forest
   interactables[3] = new HashMap<Integer, Interactable>();
 }

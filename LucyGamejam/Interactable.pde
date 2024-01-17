@@ -14,7 +14,7 @@ class Interactable {
     this.emotionProperties = emotionProperties;
   }
   Interactable(Consumer<Integer> callback, int callbackValue, PImage[] images, byte[][][] emotionProperties) {
-    this(callback, 0, emotionProperties);
+    this(callback, callbackValue, emotionProperties);
     this.images = images;
   }
   Interactable(Consumer<PImage[]> callback, PImage[] images, byte[][][] emotionProperties) {
@@ -31,16 +31,16 @@ class Interactable {
       } else if(callbackImages != null && callbackValue == -1) { // Callback passing images out
         callbackImages.accept(images);
       }
-      if(emotionProperties != null) storyStage += emotionProperties[storyStage][1][1];
-    }
-    if(emotionProperties != null) {
-      if(emotionProperties[storyStage][0] != null) {
+
+      if(emotionProperties != null) {
         player.setActiveBubble(emotionProperties[storyStage][1][0]);
         for(int i = 0; i < emotionProperties[storyStage][2].length; i++) {
-          parentInteractablesArray.get(emotionProperties[storyStage][2][i]).storyStage++;
+          parentInteractablesArray.get(int(emotionProperties[storyStage][2][i])).storyStage++;
         }
+        storyStage += emotionProperties[storyStage][1][1];
       }
-      else player.setActiveBubble(NEUTRAL);
+    } else { // If the player doesn't meet the requirements or the interactable is disabled for this story stage
+      player.setActiveBubble(NEUTRAL);
     }
   }
 

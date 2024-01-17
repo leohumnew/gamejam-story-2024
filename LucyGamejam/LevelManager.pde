@@ -3,7 +3,7 @@ class LevelManager {
   private PImage[] mainLayers, staticItems, foregroundItems, extraLayers;
   private float[][] itemPositions;
   private int[][] foregroundItemPositions;
-  int posX = 0, timeOfDay = 12;
+  int posX = 0, timeOfDay = 22;
   private int[] bgYPos = new int[2];
   private float[][] extraPositions;
   private NPC[] npcs = new NPC[0];
@@ -85,9 +85,9 @@ class LevelManager {
     for (int i = 0; i < staticItems.length; i++) {
       for(int j = 0; j < itemPositions[i].length; j++) {
         int pos = (int)itemPositions[i][j];
-        if(pos != -1) {
+        if(pos != -1 && pos > posX/S - staticItems[i].width && pos < posX/S + width/S) { // Cull offscreen and hidden items
           int yOffset = (pos == itemPositions[i][j]) ? (int)(mainLayers[0].height*0.78) : round((abs(itemPositions[i][j]) % pos) * 100); // Get y position from the decimal part of the position, offset to allow for negatives
-          if(interactables.containsKey(i) && (posX + width/2)/S > pos && (posX + width/2)/S < pos + staticItems[i].width) {
+          if(interactables.containsKey(i) && (posX + width/2)/S > pos && (posX + width/2)/S < pos + staticItems[i].width) { // If close enough to interact
             pushStyle();
             tint(170);
             image(staticItems[i], pos*S - posX, height - (staticItems[i].height + yOffset)*S, staticItems[i].width*S, staticItems[i].height*S);
