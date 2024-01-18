@@ -164,7 +164,7 @@ Consumer<Integer> advanceTime = i -> {
 void loadAssets(){
   ui = new PImage[1];
   ui[0] = Utilities.loadImagePng(this, "Enter.png", 32, 32);
-  interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 1056, 32, 33, 1);
+  interactionBubbles = Utilities.loadImagePng(this, "SpeechBubblesSpriteSheet.png", 1184, 32, 37, 1);
   // Level 0: Village
   mainLevelLayers[0][0] = Utilities.loadImagePng(this, "GroundPath.png", 240, 41);
   mainLevelLayers[0][1] = Utilities.loadImagePng(this, "Mountains.png", 360, 62);
