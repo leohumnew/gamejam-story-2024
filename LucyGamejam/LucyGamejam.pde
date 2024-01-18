@@ -29,14 +29,15 @@ float[][][] itemPositions = {
     {-200.001},{253.4},{315.4},{113.42},{-194.001}
   },{
     {-10.001},{60.39},{385.3},{444.3},{489.36},{367.3},{236.39},{175.39},{-160, 595},{-70,575}
-  },{ // 0-11 = Bushes, 12-14 = Big trees, 15-20 = Trees
+  },{ // 0-11 = Bushes, 12-14 = Big trees, 15-20 = Trees, 21 = Sitting log
     {-350},{300},{-100},{200},{400},{50},{-200},{740},{700},{100},{500},{-630},
     {-300, 600},{-20, 130},{-500, 250},
-    {100},{-580},{350},{-400},{50},{-690}
+    {100},{-580},{350},{-400},{50},{-690},
+    {-50.14}
   }
 }; 
 // 0 = Trees, 1 = Bushes
-int[][][] foregroundItemPositions = {{{800},{-110, 1380}},{},{{470},{-110, 645}},{{100},{-200},{-320},{250},{-400},{350},{450},{-300}}};
+int[][][] foregroundItemPositions = {{{800},{-110, 1380}},{},{{470},{-110, 645}},{{100},{-200},{-320},{250},{-400},{350, -500},{450},{-300}}};
 HashMap<Integer, Interactable>[] interactables = new HashMap[LVL_NUM];
 SoundFile effects[];
 
@@ -205,8 +206,9 @@ void loadAssets(){
   mainLevelLayers[3][2] = mainLevelLayers[0][2];
   mainLevelLayers[3][3] = mainLevelLayers[0][3];
   mainLevelLayers[3][4] = mainLevelLayers[0][4];
-  levelItems[3] = new PImage[21];
+  levelItems[3] = new PImage[22];
   arrayCopy(levelItems[0], 13, levelItems[3], 0, 21);
+  levelItems[3][21] = Utilities.loadImagePng(this, "SittingLog.png", 33, 29);
   levelForegroundItems[3] = new PImage[7];
   arrayCopy(levelItems[0], 13, levelForegroundItems[3], 0, 6);
   levelForegroundItems[3][6] = levelItems[0][28];
@@ -287,6 +289,10 @@ void loadInteractables() {
     {{},{LOVE,1},{2}}, {null}, // Evening 1
     {null} // Morning 2
   }));
+  PImage[] tempArray;
+  tempArray = Utilities.loadImagePng(this, "PicoSpriteSheet.png", 120, 147, 6, 7);
+  interactables[2].get(5).setSecondaryAnimations(new Animation[]{
+    new Animation(tempArray, 365, 56, false)});
   interactables[2].put(6, new Interactable(new byte[][][]{ // Kitchen door
     {null}, // Evening 1
     {null} // Morning 2
@@ -295,9 +301,8 @@ void loadInteractables() {
     {{},{FEAR,0},{}}, {null}, // Evening 1
     {null} // Morning 2
   }));
-  PImage[] tempArray;
   arrayCopy(interactionBubbles, 5, tempArray = new PImage[4], 0, 4);
-  interactables[2].get(7).setSecondaryAnimation(new Animation[]{
+  interactables[2].get(7).setSecondaryAnimations(new Animation[]{
     new Animation(tempArray, 185, 78, false), new Animation(tempArray, 170, 60, true)});
   //---- Level 3: Forest ----//
   interactables[3] = new HashMap<Integer, Interactable>();

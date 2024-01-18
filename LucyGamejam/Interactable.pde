@@ -9,7 +9,7 @@ class Interactable {
   public HashMap<Integer, Interactable> parentInteractablesArray;
   private Animation secondaryAnimations[];
 
-  Interactable(byte[][][] emotionProperties) {
+  Interactable(byte[][][] emotionProperties) { // Emotion propeties: [requirements, causedEmotion + story steps to advance, Interactables to advance]
     this.emotionProperties = emotionProperties;
   }
   Interactable(Consumer<Integer> callback, int callbackValue, byte[][][] emotionProperties) {
@@ -26,7 +26,7 @@ class Interactable {
     this.images = images;
     this.emotionProperties = emotionProperties;
   }
-  void setSecondaryAnimation(Animation[] secondaryAnimations) {
+  void setSecondaryAnimations(Animation[] secondaryAnimations) {
     this.secondaryAnimations = secondaryAnimations;
   }
 
@@ -40,7 +40,6 @@ class Interactable {
         if(emotionProperties[storyStage][2].length > 0) {
           for(int i = 0; i < emotionProperties[storyStage][2].length; i++) {
             parentInteractablesArray.get(int(emotionProperties[storyStage][2][i])).storyStage++;
-            println(parentInteractablesArray.get(int(emotionProperties[storyStage][2][i])).storyStage);
           }
         }
         // Run callback, advance story, and play animation if not locked or if no caused emotions/requirements
