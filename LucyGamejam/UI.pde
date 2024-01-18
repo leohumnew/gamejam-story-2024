@@ -137,8 +137,8 @@ class FPSCounter implements UIElement {
   }
 
   public void render() {
-    fill(0);
-    rect(x-40, y-15, 80, 30);
+    //fill(0);
+    //rect(x-40, y-15, 80, 30);
     fill(255);
     // FPS, rounded to 0 decimal places
     text("FPS: " + Math.round(frameRate), x, y);

@@ -1,3 +1,7 @@
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+
 import processing.sound.*;
 SoundManager soundManager;
 final int S = 8, FS = 10, LVL_NUM = 4;
@@ -56,7 +60,11 @@ void settings() {
 void setup(){
   surface.setTitle("Lucy");
   ((PGraphicsOpenGL)g).textureSampling(2);
-  frameRate(60);
+  GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+  int rr = ge.getScreenDevices()[0].getDisplayMode().getRefreshRate();
+  if(rr > 0) frameRate(rr);
+  else frameRate(60);
+  println("Refresh rate of monitor:", rr);
   background(0);
 
   // Load screen while loading assets
@@ -143,10 +151,12 @@ Consumer<PImage[]> rideBike = img -> {
   itemPositions[0][36][0] = -1;
   player.setActiveAction(0, img, dropItem);
 };
-Consumer<Integer> changeTimeVar = i -> timeOfDay = i;
+Consumer<Integer> changeTimeVar = i -> {
+  timeOfDay = i;
+  activeLevel.advanceTime();
+};
 Consumer<Integer> advanceTime = i -> {
   fadeManager.fade(changeTimeVar, i);
-  activeLevel.advanceTime();
 };
 
 // LOAD ASSETS //
@@ -286,19 +296,19 @@ void loadInteractables() {
     {null} // Morning 2
   }));
   interactables[2].put(5, new Interactable(new byte[][][]{ // Cage
-    {{},{LOVE,1},{2}}, {null}, // Evening 1
-    {null} // Morning 2
+    {{},{LOVE,1, 0},{2}}, {null,{1}}, // Evening 1
+    {null,{0}} // Morning 2
   }));
   PImage[] tempArray;
-  tempArray = Utilities.loadImagePng(this, "PicoSpriteSheet.png", 120, 147, 6, 7);
+  tempArray = Utilities.loadImagePng(this, "PicoSpriteSheet.png", 120, 21, 6, 1);
   interactables[2].get(5).setSecondaryAnimations(new Animation[]{
-    new Animation(tempArray, 365, 56, false)});
+    new Animation(new PImage[]{tempArray[0]}, 365, 56, false), new Animation(tempArray, 365, 56, false, 280*S)});
   interactables[2].put(6, new Interactable(new byte[][][]{ // Kitchen door
     {null}, // Evening 1
     {null} // Morning 2
   }));
   interactables[2].put(7, new Interactable(new byte[][][]{ // Living room door
-    {{},{FEAR,0},{}}, {null}, // Evening 1
+    {{},{FEAR,0, 0,1},{}}, {null}, // Evening 1
     {null} // Morning 2
   }));
   arrayCopy(interactionBubbles, 5, tempArray = new PImage[4], 0, 4);

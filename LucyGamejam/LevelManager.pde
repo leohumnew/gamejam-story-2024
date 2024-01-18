@@ -89,8 +89,8 @@ class LevelManager {
         int pos = (int)itemPositions[i][j];
         if(pos != -1 && pos > playerX/S - staticItems[i].width && pos < playerX/S + width/S) { // Cull offscreen and hidden items
           int yOffset = (pos == itemPositions[i][j]) ? (int)(mainLayers[0].height*0.78) : round((abs(itemPositions[i][j]) % pos) * 100); // Get y position from the decimal part of the position, offset to allow for negatives
-          if(interactables.containsKey(i)) { // If close enough to interact
-            if((playerX + width/2)/S > pos && (playerX + width/2)/S < pos + staticItems[i].width) {
+          if(interactables.containsKey(i)) {
+            if((playerX + width/2)/S > pos && (playerX + width/2)/S < pos + staticItems[i].width) { // If close enough to interact
               pushStyle();
               tint(170);
               image(staticItems[i], pos*S - playerX, height - (staticItems[i].height + yOffset)*S, staticItems[i].width*S, staticItems[i].height*S);

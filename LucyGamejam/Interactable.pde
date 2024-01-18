@@ -69,8 +69,14 @@ class Interactable {
   // Render animations
   void render(int playerX) {
     if(secondaryAnimations != null) {
-      for(Animation animation : secondaryAnimations) {
-        animation.render(playerX);
+      if(emotionProperties[storyStage][0] != null && emotionProperties[storyStage][1].length > 2) {
+        for(int i = 2; i < emotionProperties[storyStage][1].length; i++) {
+          secondaryAnimations[emotionProperties[storyStage][1][i]].render(playerX);
+        }
+      } else if(emotionProperties[storyStage][0] == null && emotionProperties[storyStage].length > 1) {
+        for(int i = 0; i < emotionProperties[storyStage][1].length; i++) {
+          secondaryAnimations[emotionProperties[storyStage][1][i]].render(playerX);
+        }
       }
     }
   }
