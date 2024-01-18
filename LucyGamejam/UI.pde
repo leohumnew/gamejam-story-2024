@@ -147,7 +147,7 @@ class FPSCounter implements UIElement {
 
 // FADE MANAGER //
 class FadeManager {
-  private int duration;
+  private int duration, oldDuration;
   private int initTime;
   private int fadeState = -1; // -1: Inactive, 0: Fading in, 1: Fading out
   private int newValue;
@@ -162,6 +162,12 @@ class FadeManager {
     this.newValue = newValue;
     fadeState = 0;
     initTime = millis();
+    inputEnabled = false;
+  }
+  public void fade(Consumer<Integer> callback, int newValue, int duration) {
+    oldDuration = this.duration;
+    this.duration = duration / 2;
+    fade(callback, newValue);
   }
 
   public void update() {
@@ -177,6 +183,8 @@ class FadeManager {
       fill(0, constrain(map(millis(), initTime, initTime + duration, 255, 0), 0, 255));
       if (millis() >= initTime + duration) {
         fadeState = -1;
+        duration = oldDuration;
+        inputEnabled = true;
       }
     }
 
