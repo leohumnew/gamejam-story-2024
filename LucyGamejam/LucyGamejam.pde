@@ -28,7 +28,7 @@ float[][][] itemPositions = {
   },{ // 0 = School, 1 = Bench, 2 = Tree, 3 = Class door, 4 = Exit door
     {-200.001},{253.4},{315.4},{113.42},{-194.001}
   },{
-    {-10.001},{60.39},{385.3},{444.3},{489.36},{367.3},{236.39},{175.39},{-160, 580},{-70,575}
+    {-10.001},{60.39},{385.3},{444.3},{489.36},{367.3},{236.39},{175.39},{-160, 595},{-70,575}
   },{ // 0-11 = Bushes, 12-14 = Big trees, 15-20 = Trees
     {-350},{300},{-100},{200},{400},{50},{-200},{740},{700},{100},{500},{-630},
     {-300, 600},{-20, 130},{-500, 250},
@@ -295,6 +295,10 @@ void loadInteractables() {
     {{},{FEAR,0},{}}, {null}, // Evening 1
     {null} // Morning 2
   }));
+  PImage[] tempArray;
+  arrayCopy(interactionBubbles, 5, tempArray = new PImage[4], 0, 4);
+  interactables[2].get(7).setSecondaryAnimation(new Animation[]{
+    new Animation(tempArray, 185, 78, false), new Animation(tempArray, 170, 60, true)});
   //---- Level 3: Forest ----//
   interactables[3] = new HashMap<Integer, Interactable>();
 }

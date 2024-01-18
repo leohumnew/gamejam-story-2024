@@ -7,6 +7,7 @@ class Interactable {
   public short storyStage = 0;
   private byte[][][] emotionProperties; // Each one contains [requirements, causedEmotion + story steps to advance, advancedInteractables]
   public HashMap<Integer, Interactable> parentInteractablesArray;
+  private Animation secondaryAnimations[];
 
   Interactable(byte[][][] emotionProperties) {
     this.emotionProperties = emotionProperties;
@@ -25,7 +26,11 @@ class Interactable {
     this.images = images;
     this.emotionProperties = emotionProperties;
   }
+  void setSecondaryAnimation(Animation[] secondaryAnimations) {
+    this.secondaryAnimations = secondaryAnimations;
+  }
 
+  // Main interaction method
   void interact() {
     if(emotionProperties == null || emotionProperties[storyStage][0] != null && (emotionProperties[storyStage][0].length == 0 || Utilities.contains(emotionProperties[storyStage][0], player.lastChoice))) {
       if(emotionProperties != null && emotionProperties[storyStage][1] != null) { // If the interactable has a story stage to advance to
@@ -59,6 +64,15 @@ class Interactable {
       }
     } else { // If the player doesn't meet the requirements or the interactable is disabled for this story stage
       player.setActiveBubble(NEUTRAL);
+    }
+  }
+
+  // Render animations
+  void render(int playerX) {
+    if(secondaryAnimations != null) {
+      for(Animation animation : secondaryAnimations) {
+        animation.render(playerX);
+      }
     }
   }
 
