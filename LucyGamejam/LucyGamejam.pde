@@ -302,15 +302,18 @@ void loadInteractables() {
     {{},{LOVE,1, 0},{2}}, {null,{1}}, // Evening 1
     {null,{0}} // Morning 2
   }));
-    interactables[2].put(6, new Interactable(new byte[][][]{ // Kitchen door
+  interactables[2].put(6, new Interactable(new byte[][][]{ // Kitchen door
     {null}, // Evening 1
-    {null} // Morning 2
+    {null,{0}} // Morning 2
   }));
+  PImage[] tempArray;
+  arrayCopy(Utilities.loadImagePng(this, "MomSpriteSheet.png", 384, 49, 12, 1), 8, tempArray = new PImage[4], 0, 4);
+  interactables[2].get(6).setSecondaryAnimations(new Animation[]{ // Kitchen door with mum
+    new Animation(tempArray, 242, 36, false)});
   interactables[2].put(7, new Interactable(new byte[][][]{ // Living room door
     {{},{FEAR,0, 0,1},{}}, {null}, // Evening 1
     {null} // Morning 2
   }));
-  PImage[] tempArray;
   arrayCopy(interactionBubbles, 5, tempArray = new PImage[4], 0, 4);
   interactables[2].get(7).setSecondaryAnimations(new Animation[]{ // Parents arguing animation
     new Animation(tempArray, 185, 78, false), new Animation(tempArray, 170, 60, true)});

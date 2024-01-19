@@ -31,14 +31,14 @@ class Player {
   }
 
   void keyRelease() {
-    if (key == 'a' || keyCode == LEFT) speedX = 0;
-    else if (key == 'd' || keyCode == RIGHT) speedX = 0;
+    if ((key == 'a' || keyCode == LEFT) && !keyPressed) speedX = 0;
+    else if ((key == 'd' || keyCode == RIGHT) && !keyPressed) speedX = 0;
   }
 
   // Interactions
   void setActiveBubble(byte activeBubble) {
     // 0: no action, 1: bravery, 2: sadness, 3: fear, 4: anger, 5: love, 6: peace, 7: healing, 8: locked
-    lastChoice = activeBubble;
+    if(activeBubble != NEUTRAL) lastChoice = activeBubble;
     this.activeBubble = activeBubble - 1; // Subtract one so as to start animation ones from 0
     bubbleTime = millis();
     bubbleDuration = this.activeBubble == -1 ? 700 : 2500;
