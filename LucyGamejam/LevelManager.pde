@@ -8,9 +8,10 @@ class LevelManager {
   private float[][] extraPositions;
   private NPC[] npcs = new NPC[0];
   private HashMap<Integer, Interactable> interactables;
+  private HashMap<Integer, Trigger> triggers;
   private ArrayList<Interactable> pendingInteractions = new ArrayList<Interactable>();
 
-  LevelManager(int level, PImage mainLayers[], PImage staticItems[], float[][] itemPositions, PImage foregroundItems[], int[][] foregroundItemPositions, HashMap<Integer, Interactable> interactables) {
+  LevelManager(int level, PImage mainLayers[], PImage staticItems[], float[][] itemPositions, PImage foregroundItems[], int[][] foregroundItemPositions, HashMap<Integer, Interactable> interactables, HashMap<Integer, Trigger> triggers) {
     this.level = level;
     this.mainLayers = mainLayers;
     this.staticItems = staticItems;
@@ -18,6 +19,7 @@ class LevelManager {
     this.foregroundItems = foregroundItems;
     this.foregroundItemPositions = foregroundItemPositions;
     this.interactables = interactables;
+    this.triggers = triggers;
     for(Interactable interactable : interactables.values()) {
       interactable.parentInteractablesArray = this.interactables;
     }
@@ -41,6 +43,12 @@ class LevelManager {
   // Rendering the level
   public void render(int playerX) {
     this.playerX = playerX;
+
+    // Check triggers
+    for(Trigger trigger : triggers.values()) {
+      trigger.update(playerX);
+    }
+
     // Set sky colour and tint based on time
     noTint();
     if(timeOfDay > 6 && timeOfDay < 16) {

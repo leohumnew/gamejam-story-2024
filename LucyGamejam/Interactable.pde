@@ -7,7 +7,7 @@ class Interactable {
   public short storyStage = 0;
   private byte[][][] emotionProperties; // Each one contains [requirements, causedEmotion + story steps to advance, advancedInteractables]
   public HashMap<Integer, Interactable> parentInteractablesArray;
-  private Animation secondaryAnimations[];
+  private Animation[] secondaryAnimations;
 
   Interactable(byte[][][] emotionProperties) { // Emotion propeties: [requirements, causedEmotion + story steps to advance, Interactables to advance]
     this.emotionProperties = emotionProperties;
@@ -91,5 +91,9 @@ class Interactable {
       while(emotionProperties[storyStage] != null && emotionProperties[storyStage][0] != null) storyStage++;
       if(emotionProperties[storyStage] != null) storyStage++;
     }
+  }
+
+  void advanceStoryStage() {
+    storyStage++;
   }
 }

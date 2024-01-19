@@ -21,29 +21,31 @@ PImage[][] levelItems = new PImage[LVL_NUM][];
 PImage[][] levelForegroundItems = new PImage[LVL_NUM][];
 // 0 = Village, 1 = School, 2 = Home, 3 = Forest
 float[][][] itemPositions = {
-  { // 0 = Highschool, 1-3 = MC Houses, 4-12 = Houses, 13-24 = Bushes, 25-27 = Big trees, 28-33 = Trees, 34-35 = Doors, 36 = Bike
+  { // 0 = Highschool, 1-3 = MC Houses, 4-12 = Houses, 13-24 = Bushes, 25-27 = Big trees, 28-33 = Trees, 34-35 = Doors, 36 = Bike, 37 = Barrier
     {1375},
-    {45},{-1},{-1},
-    {400},{-1},{200},{1100},{-275},{1225},{800, 1600},{-150},{925},
-    {175},{1050},{600},{-200},{1750},{},{-100},{},{-500},{},{-700},{},
+    {45},{},{},
+    {400},{},{200},{1100},{-275},{1225},{800, 1600},{-150},{925},
+    {175},{1050},{600},{-200},{1750},{},{-100},{},{-500},{},{},{},
     {300},{1700},{-400},
     {0},{},{750},{550},{},{},
     {1449},{113},
-    {150}
-  },{ // 0 = School, 1 = Bench, 2 = Tree, 3 = Class door, 4 = Exit door
-    {-200.001},{253.4},{315.4},{113.42},{-194.001}
+    {150},
+    {-245.12, 1765.12}
+  },{ // 0 = School, 1 = Bench, 2 = Tree, 3 = Class door, 4 = Exit door, 5 = Football NPC
+    {-200.001},{253.4},{315.4},{113.42},{-194.001},{480.22}
   },{
     {-10.001},{60.39},{385.3},{444.3},{489.36},{367.3},{236.39},{175.39},{-160, 595},{-70,575}
   },{ // 0-11 = Bushes, 12-14 = Big trees, 15-20 = Trees, 21 = Sitting log, 22 = House
-    {-250},{300},{-100},{200},{400},{50},{-200},{740},{700},{100},{500},{-1},
+    {-250},{300},{-100},{200},{400},{50},{-200},{740},{700},{100},{500},{},
     {-300, 600},{-20, 130},{250},
-    {100},{-180},{350},{-350},{50},{-1},
+    {100},{-180},{350},{-350},{50},{},
     {250.14},{-50}
   }
 }; 
 // 0 = Trees, 1 = Bushes
 int[][][] foregroundItemPositions = {{{800},{-110, 1380}},{},{{470},{-110, 645}},{{100},{-200},{-320},{-1},{-320},{350, -250},{450},{-300}}};
 HashMap<Integer, Interactable>[] interactables = new HashMap[LVL_NUM];
+HashMap<Integer, Trigger>[] triggers = new HashMap[LVL_NUM];
 SoundFile effects[];
 
 // GAME VARIABLES //
@@ -104,7 +106,7 @@ void drawGame(int level){
 Consumer<Integer> changeStage = i -> {
   if(i > 0) {
     player.changeLevel(i);
-    activeLevel = new LevelManager(i, mainLevelLayers[i-1], levelItems[i-1], itemPositions[i-1], levelForegroundItems[i-1], foregroundItemPositions[i-1], interactables[i-1]);
+    activeLevel = new LevelManager(i, mainLevelLayers[i-1], levelItems[i-1], itemPositions[i-1], levelForegroundItems[i-1], foregroundItemPositions[i-1], interactables[i-1], triggers[i-1]);
     // Level extras
     if(i == 1) {
       NPC[] npcs = { new NPC(bird, -width - 100, 100, true, -25) };
@@ -171,7 +173,7 @@ void loadAssets(){
   mainLevelLayers[0][2] = Utilities.loadImagePng(this, "Clouds.png", 358, 100);
   mainLevelLayers[0][3] = Utilities.loadImagePng(this, "Sunset.png", 240, 135);
   mainLevelLayers[0][4] = Utilities.loadImagePng(this, "NightSky.png", 240, 135);
-  levelItems[0] = new PImage[37];
+  levelItems[0] = new PImage[38];
   levelItems[0][0] = Utilities.loadImagePng(this, "School.png", 216, 188);
   arrayCopy(Utilities.loadImagePng(this, "HousesSpriteSheet.png", 480, 327, 4, 3), 0, levelItems[0], 1, 12);
   arrayCopy(Utilities.loadImagePng(this, "BushesSpriteSheet.png", 192, 102, 4, 3), 0, levelItems[0], 13, 12);
@@ -180,12 +182,13 @@ void loadAssets(){
   levelItems[0][34] = Utilities.loadImagePng(this, "SchoolDoor.png", 68, 69);
   levelItems[0][35] = Utilities.loadImagePng(this, "HouseDoor.png", 34, 46);
   levelItems[0][36] = Utilities.loadImagePng(this, "Bike.png", 40, 27);
+  levelItems[0][37] = Utilities.loadImagePng(this, "Barrier.png", 29, 23);
   levelForegroundItems[0] = new PImage[2];
   levelForegroundItems[0][0] = levelItems[0][19];
   levelForegroundItems[0][1] = levelItems[0][13];
   // Level 1: School
   mainLevelLayers[1] = mainLevelLayers[0];
-  levelItems[1] = new PImage[5];
+  levelItems[1] = new PImage[6];
   levelItems[1][0] = Utilities.loadImagePng(this, "SchoolInside.png", 924, 135);
   levelItems[1][1] = Utilities.loadImagePng(this, "Bench.png", 51, 27);
   levelItems[1][2] = Utilities.loadImagePng(this, "treeBigTrunk.png", 69, 72);
@@ -250,6 +253,7 @@ void loadAssets(){
   // Prepare player
   player = new Player(Utilities.loadImagePng(this, "PlayerSpriteSheet.png", 384, 49, 12, 1));
   loadInteractables();
+  loadTriggers();
 
   // Make menu UI
   menuUI.add(new ImgButton(width/2 - 27*S, height/2, 54*S, 62*S, Utilities.loadImagePng(this, "PlayButton.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonHover.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonPush.png", 300, 100), fadeStage, 3));
@@ -270,16 +274,32 @@ void loadInteractables() {
   interactables[0].put(36, new Interactable(rideBike, animImages, null));
   //---- Level 1: School ----//
   interactables[1] = new HashMap<Integer, Interactable>();
-  interactables[1].put(1, new Interactable(playerEmotion, 1, null));
-  interactables[1].put(2, new Interactable(playerEmotion, 2, null));
+  interactables[1].put(1, new Interactable(new byte[][][]{ // Bench
+    {{SADNESS},{SADNESS,1},{}}, {null}, // Morning 2
+    {null} // Afternoon 2
+  }));
+  interactables[1].put(2, new Interactable(new byte[][][]{ // Tree
+    {{},{FEAR,1},{}},{null}, // Morning 2
+    {null} // Afternoon 2
+  }));
   animImages = Utilities.loadImagePng(this, "SchoolInsideDoorSpriteSheet.png", 324, 48, 6, 1);
-  interactables[1].put(3, new Interactable(playerEmotion, 2, animImages, new byte[][][]{ // Class door
-    {{},{FEAR,1},{4}}, {null} // Morning 2
+  interactables[1].put(3, new Interactable(advanceTime, 19, animImages, new byte[][][]{ // Class door
+    {{},{FEAR,1},{4}}, {null}, // Morning 2
+    {null} // Afternoon 2
   })); 
   levelItems[1][3] = animImages[5];
   interactables[1].put(4, new Interactable(fadeStage, 1, new byte[][][]{ // Exit door
-    {{},{LOCKED,0},{}}, {{},{},{}}, {null} // Morning 2
+    {{},{LOCKED,0},{}}, {null}, // Morning 2
+    {{},{},{}}, {null} // Afternoon 2
   }));
+  interactables[1].put(5, new Interactable(new byte[][][]{ // Football NPC
+    {null,{0}}, {null,{1}}, {null}, // Morning 2
+    {null} // Afternoon 2
+  }));
+  animImages = Utilities.loadImagePng(this, "npcs/NPCLightGrayM.png", 384, 49, 12, 1);
+  levelItems[1][5] = animImages[0];
+  interactables[1].get(5).setSecondaryAnimations(new Animation[]{ // Football NPC with ball
+    new Animation(new PImage[]{Utilities.loadImagePng(this, "Football.png", 10, 10)}, 480, 40, true), new Animation(new PImage[]{Utilities.loadImagePng(this, "Football.png", 10, 10)}, 480, 40, false, -100*S, 1500)});
   //---- Level 2: Home ----//
   interactables[2] = new HashMap<Integer, Interactable>();
   interactables[2].put(1, new Interactable(fadeStage, 1, new byte[][][]{ // House door
@@ -304,7 +324,8 @@ void loadInteractables() {
   }));
   interactables[2].put(6, new Interactable(new byte[][][]{ // Kitchen door
     {null}, // Evening 1
-    {null,{0}} // Morning 2
+    {null}, // Morning 2
+    {null,{0}} // Afternoon 2
   }));
   PImage[] tempArray;
   arrayCopy(Utilities.loadImagePng(this, "MomSpriteSheet.png", 384, 49, 12, 1), 8, tempArray = new PImage[4], 0, 4);
@@ -319,7 +340,7 @@ void loadInteractables() {
     new Animation(tempArray, 185, 78, false), new Animation(tempArray, 170, 60, true)});
   tempArray = Utilities.loadImagePng(this, "PicoSpriteSheet.png", 120, 21, 6, 1);
   interactables[2].get(5).setSecondaryAnimations(new Animation[]{
-    new Animation(new PImage[]{tempArray[0]}, 365, 56, false), new Animation(tempArray, 365, 56, false, 280*S)});
+    new Animation(new PImage[]{tempArray[0]}, 365, 56, false), new Animation(tempArray, 365, 56, false, 280*S, 3500)});
   //---- Level 3: Forest ----//
   interactables[3] = new HashMap<Integer, Interactable>();
   interactables[3].put(22, new Interactable(fadeStage, 3, null));
@@ -329,4 +350,19 @@ void loadInteractables() {
   }));
   interactables[3].get(21).setSecondaryAnimations(new Animation[]{ // Sitting log with Pico
     new Animation(new PImage[]{tempArray[0]}, 255, 28, false)});
+}
+
+// LOAD TRIGGERS //
+Consumer<Integer> advanceStoryOnInteractable = i -> interactables[stage-1].get(i).advanceStoryStage();
+
+void loadTriggers() {
+  //---- Level 0: Village ----//
+  triggers[0] = new HashMap<Integer, Trigger>();
+  //---- Level 1: School ----//
+  triggers[1] = new HashMap<Integer, Trigger>();
+  triggers[1].put(1, new Trigger(advanceStoryOnInteractable, 5, 380, triggers[1], 1));
+  //---- Level 2: Home ----//
+  triggers[2] = new HashMap<Integer, Trigger>();
+  //---- Level 3: Forest ----//
+  triggers[3] = new HashMap<Integer, Trigger>();
 }

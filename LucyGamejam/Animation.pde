@@ -1,6 +1,6 @@
 class Animation {
     private PImage[] images;
-    private int x, y, startTime, currentImage = 0;
+    private int x, y, startTime, currentImage = 0, duration = 1;
     private boolean flip;
     private int xOffsetEnd, xOffsetCurrent = 0, offsetStartTime;
 
@@ -11,16 +11,17 @@ class Animation {
         this.startTime = millis();
         this.flip = flip;
     }
-    Animation(PImage[] images, int x, int y, boolean flip, int xOffsetEnd) {
+    Animation(PImage[] images, int x, int y, boolean flip, int xOffsetEnd, int duration) {
         this(images, x, y, flip);
         this.xOffsetEnd = xOffsetEnd;
+        this.duration = duration;
     }
 
     void render(int playerX) {
         if (xOffsetEnd != 0) {
-            if(xOffsetCurrent > xOffsetEnd) return;
+            if(abs(xOffsetCurrent) > abs(xOffsetEnd)) return;
             if(offsetStartTime == 0) offsetStartTime = millis();
-            xOffsetCurrent = (int) map(millis() - offsetStartTime, 0, 4000, 0, xOffsetEnd);
+            xOffsetCurrent = (int) map(millis() - offsetStartTime, 0, duration, 0, xOffsetEnd);
         }
         if(!flip) image(images[currentImage], x - playerX + xOffsetCurrent, height - y - images[0].height*S, images[0].width*S, images[0].height*S);
         else {
