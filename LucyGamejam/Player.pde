@@ -15,6 +15,10 @@ class Player {
     playerHeight = images[0].height*S;
     for(int i = 0; i < posX.length; i++) posX[i] = posX[i]*S - width/2;
   }
+  
+  float getPosX() {
+    return posX[level];
+  }
 
   void changeLevel(int newLevel) {
     level = newLevel;

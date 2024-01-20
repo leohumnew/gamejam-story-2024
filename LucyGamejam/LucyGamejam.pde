@@ -30,7 +30,7 @@ float[][][] itemPositions = {
     {0},{},{750},{550},{},{},
     {1449},{113},
     {150},
-    {-270.12, 1764.12}
+    {-270.12, 1766.12}
   },{ // 0 = School, 1 = Bench, 2 = Tree, 3 = Class door, 4 = Exit door, 5 = Football NPC
     {-200.001},{253.4},{315.4},{113.42},{-194.001},{480.22}
   },{
@@ -258,7 +258,7 @@ void loadAssets(){
   // Make menu UI
   menuUI.add(new ImgButton(width/2 - 27*S, height/2, 54*S, 62*S, Utilities.loadImagePng(this, "PlayButton.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonHover.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonPush.png", 300, 100), fadeStage, 3));
   debugUI.add(new FPSCounter(100,100));
-  menuBackground = Utilities.loadImagePng(this, "TitleScreen.png", 1920, 1080);
+  menuBackground = Utilities.loadImagePng(this, "TitleScreen.png", width, height);
 
   fadeStage.accept(0);
 }
@@ -299,7 +299,7 @@ void loadInteractables() {
   animImages = Utilities.loadImagePng(this, "npcs/NPCLightGrayM.png", 384, 49, 12, 1);
   levelItems[1][5] = animImages[0];
   interactables[1].get(5).setSecondaryAnimations(new Animation[]{ // Football NPC with ball
-    new Animation(new PImage[]{Utilities.loadImagePng(this, "Football.png", 10, 10)}, 480, 40, true), new Animation(new PImage[]{Utilities.loadImagePng(this, "Football.png", 10, 10)}, 480, 40, false, -100*S, 1500)});
+    new Animation(new PImage[]{Utilities.loadImagePng(this, "Football.png", 10, 10)}, 480, 44, true), new Animation(new PImage[]{Utilities.loadImagePng(this, "Football.png", 10, 10)}, 480, 44, false, -(int)(480*S - (player.getPosX()*S + width/2)), 1000)});
   //---- Level 2: Home ----//
   interactables[2] = new HashMap<Integer, Interactable>();
   interactables[2].put(1, new Interactable(fadeStage, 1, new byte[][][]{ // House door
@@ -360,7 +360,7 @@ void loadTriggers() {
   triggers[0] = new HashMap<Integer, Trigger>();
   //---- Level 1: School ----//
   triggers[1] = new HashMap<Integer, Trigger>();
-  triggers[1].put(1, new Trigger(advanceStoryOnInteractable, 5, 380, triggers[1], 1));
+  triggers[1].put(1, new Trigger(advanceStoryOnInteractable, 5, 390, triggers[1], 1));
   //---- Level 2: Home ----//
   triggers[2] = new HashMap<Integer, Trigger>();
   //---- Level 3: Forest ----//
