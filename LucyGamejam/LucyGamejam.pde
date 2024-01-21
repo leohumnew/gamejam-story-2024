@@ -14,6 +14,7 @@ boolean inputEnabled = true;
 FadeManager fadeManager = new FadeManager(1000);
 UIManager menuUI = new UIManager();
 UIManager debugUI = new UIManager();
+SlideManager slideManager = new SlideManager();
 PImage loading, menuBackground;
 PImage ui[], interactionBubbles[], bird[], extraImages[];
 PImage[][] mainLevelLayers = new PImage[LVL_NUM][5];
@@ -76,7 +77,8 @@ void setup(){
 }
 
 void draw(){
-  if (stage == -2) drawSettings(); // Settings
+  if (stage == -3) drawSlides(); // Slides
+  else if (stage == -2) drawSettings(); // Settings
   else if (stage == -1) image(loading, 0, 0, width, height); // Loading screen
   else if (stage == 0) drawMenu(); // Main menu
   else if (stage >= 1) drawGame(stage); // Game
@@ -87,6 +89,10 @@ void draw(){
 }
 
 // DRAW FUNCTIONS //
+void drawSlides(){
+  slideManager.render();
+}
+
 void drawSettings(){
   // TODO
 }
@@ -112,9 +118,9 @@ Consumer<Integer> changeStage = i -> {
       NPC[] npcs = { new NPC(bird, -width - 100, 100, true, -25) };
       activeLevel.addNPCs(npcs);
     } else if(i == 2) {
-      PImage[] argumentImages = new PImage[1];
-      arrayCopy(extraImages, 2, argumentImages, 0, 1);
-      activeLevel.addExtraLayers(argumentImages, new float[][]{{-20, 44, 1.13}});
+      PImage[] argumentImages = new PImage[2];
+      arrayCopy(extraImages, 2, argumentImages, 0, 2);
+      activeLevel.addExtraLayers(argumentImages, new float[][]{{-20, 44, 1.13},{-160, 44, 1.13}});
     } else if(i == 3) {
       PImage[] argumentImages = new PImage[2];
       arrayCopy(extraImages, 0, argumentImages, 0, 2);
@@ -126,6 +132,10 @@ Consumer<Integer> changeStage = i -> {
 Consumer<Integer> fadeStage = i -> {
   fadeManager.fade(changeStage, i, 1000);
   soundManager.fadeTo(byte(i), 1000);
+};
+Consumer<Integer> goToSlides = i -> {
+  fadeManager.fade(changeStage, -3, 1000);
+  slideManager.startSlides(200, i);
 };
 
 // INPUT //
@@ -229,10 +239,11 @@ void loadAssets(){
   levelForegroundItems[3][6] = levelItems[0][28];
 
   // Load extra images
-  extraImages = new PImage[3];
+  extraImages = new PImage[4];
   extraImages[0] = Utilities.loadImagePng(this, "KitchenBG.png", 114, 46);
   extraImages[1] = Utilities.loadImagePng(this, "LivingBG.png", 61, 46);
   extraImages[2] = Utilities.loadImagePng(this, "WindowBG.png", 255, 57);
+  extraImages[3] = Utilities.loadImagePng(this, "WindowBG.png", 255, 57);
 
   bird = Utilities.loadImagePng(this, "bird.png", 72, 21, 4, 1);
 
@@ -256,9 +267,14 @@ void loadAssets(){
   loadTriggers();
 
   // Make menu UI
-  menuUI.add(new ImgButton(width/2 - 27*S, height/2, 54*S, 62*S, Utilities.loadImagePng(this, "PlayButton.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonHover.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonPush.png", 300, 100), fadeStage, 3));
+  menuUI.add(new ImgButton(width/2 - 27*S, height/2, 54*S, 62*S, Utilities.loadImagePng(this, "PlayButton.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonHover.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonPush.png", 300, 100), goToSlides, 3));
   debugUI.add(new FPSCounter(100,100));
   menuBackground = Utilities.loadImagePng(this, "TitleScreen.png", width, height);
+
+  // Prepare slides
+  PImage[] slides = new PImage[6];
+  for(int i = 0; i < 6; i++) slides[i] = Utilities.loadImagePng(this, "slides/D" + (i+1) + ".png", width, height);
+  slideManager.setSlides(slides);
 
   fadeStage.accept(0);
 }
@@ -283,7 +299,7 @@ void loadInteractables() {
     {null} // Afternoon 2
   }));
   animImages = Utilities.loadImagePng(this, "SchoolInsideDoorSpriteSheet.png", 324, 48, 6, 1);
-  interactables[1].put(3, new Interactable(advanceTime, 19, animImages, new byte[][][]{ // Class door
+  interactables[1].put(3, new Interactable(advanceTime, 16, animImages, new byte[][][]{ // Class door
     {{},{FEAR,1},{4}}, {null}, // Morning 2
     {null} // Afternoon 2
   })); 
@@ -293,13 +309,13 @@ void loadInteractables() {
     {{},{},{}}, {null} // Afternoon 2
   }));
   interactables[1].put(5, new Interactable(new byte[][][]{ // Football NPC
-    {null,{0}}, {null,{1}}, {null}, // Morning 2
+    {null,{0}}, {null,{1}}, {{},{ANGER,1},{}}, {null}, // Morning 2
     {null} // Afternoon 2
   }));
   animImages = Utilities.loadImagePng(this, "npcs/NPCLightGrayM.png", 384, 49, 12, 1);
   levelItems[1][5] = animImages[0];
   interactables[1].get(5).setSecondaryAnimations(new Animation[]{ // Football NPC with ball
-    new Animation(new PImage[]{Utilities.loadImagePng(this, "Football.png", 10, 10)}, 480, 44, true), new Animation(new PImage[]{Utilities.loadImagePng(this, "Football.png", 10, 10)}, 480, 44, false, -(int)(480*S - (player.getPosX()*S + width/2)), 1000)});
+    new Animation(new PImage[]{Utilities.loadImagePng(this, "Football.png", 10, 10)}, 480, 40, true), new Animation(new PImage[]{Utilities.loadImagePng(this, "Football.png", 10, 10)}, 480, 40, false, -1, 1200, true)});
   //---- Level 2: Home ----//
   interactables[2] = new HashMap<Integer, Interactable>();
   interactables[2].put(1, new Interactable(fadeStage, 1, new byte[][][]{ // House door

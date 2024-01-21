@@ -191,3 +191,34 @@ class FadeManager {
     rect(0, 0, width, height);
   }
 }
+
+class SlideManager {
+  private PImage[] activeSlides;
+  private int slideIndex = 0, slideDuration, lastSlideTime, endStage;
+
+  void setSlides(PImage[] slides) {
+    activeSlides = slides;
+  }
+
+  void startSlides(int slideDuration, int endStage) {
+    slideIndex = 0;
+    this.slideDuration = slideDuration;
+    this.endStage = endStage;
+    lastSlideTime = millis();
+  }
+
+  void render() {
+    if(activeSlides != null) {
+      image(activeSlides[slideIndex], 0, 0, width, height);
+    }
+
+    if(millis() >= lastSlideTime + slideDuration) {
+      slideIndex++;
+      if(slideIndex >= activeSlides.length) {
+        slideIndex = activeSlides.length - 1;
+        changeStage.accept(endStage);
+      }
+      lastSlideTime = millis();
+    }
+  }
+}

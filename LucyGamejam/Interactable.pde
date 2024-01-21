@@ -28,6 +28,9 @@ class Interactable {
   }
   void setSecondaryAnimations(Animation[] secondaryAnimations) {
     this.secondaryAnimations = secondaryAnimations;
+    for(Animation animation : secondaryAnimations) {
+      if(animation.advanceStory) animation.setCallback(advanceStoryStageCallback);
+    }
   }
 
   // Main interaction method
@@ -96,4 +99,5 @@ class Interactable {
   void advanceStoryStage() {
     storyStage++;
   }
+  Consumer<Integer> advanceStoryStageCallback = (i) -> advanceStoryStage();
 }
