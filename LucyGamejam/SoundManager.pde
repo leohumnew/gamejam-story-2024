@@ -7,10 +7,15 @@ class SoundManager {
     SoundManager(SoundFile[] music, PApplet sketch) {
         this.music = music;
         globalSoundManager = new Sound(sketch);
+        // Lower volume on all music tracks
+        for (SoundFile track : music) {
+            track.amp(0.4f);
+        }
     }
 
     void play(byte track) {
         music[track].loop();
+        currentTrack = track;
     }
 
     void fadeTo(byte destination, int duration) {

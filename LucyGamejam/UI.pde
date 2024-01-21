@@ -195,6 +195,7 @@ class FadeManager {
 class SlideManager {
   private PImage[] activeSlides;
   private int slideIndex = 0, slideDuration, lastSlideTime, endStage;
+  private boolean finished = false;
 
   void setSlides(PImage[] slides) {
     activeSlides = slides;
@@ -205,6 +206,7 @@ class SlideManager {
     this.slideDuration = slideDuration;
     this.endStage = endStage;
     lastSlideTime = millis();
+    finished = false;
   }
 
   void render() {
@@ -212,11 +214,12 @@ class SlideManager {
       image(activeSlides[slideIndex], 0, 0, width, height);
     }
 
-    if(millis() >= lastSlideTime + slideDuration) {
+    if(millis() >= lastSlideTime + slideDuration && !finished) {
       slideIndex++;
       if(slideIndex >= activeSlides.length) {
         slideIndex = activeSlides.length - 1;
-        changeStage.accept(endStage);
+        fadeStage.accept(endStage);
+        finished = true;
       }
       lastSlideTime = millis();
     }

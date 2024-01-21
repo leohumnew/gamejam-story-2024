@@ -135,7 +135,7 @@ Consumer<Integer> fadeStage = i -> {
 };
 Consumer<Integer> goToSlides = i -> {
   fadeManager.fade(changeStage, -3, 1000);
-  slideManager.startSlides(200, i);
+  slideManager.startSlides(500, i);
 };
 
 // INPUT //
@@ -254,15 +254,25 @@ void loadAssets(){
 
   // Prepare sound manager
   SoundFile[] music = new SoundFile[5];
-  music[0] = new SoundFile(this, "SchoolMusic.wav");
-  music[1] = new SoundFile(this, "VillageMusic.wav");
-  music[2] = new SoundFile(this, "SchoolMusic.wav");
-  music[3] = new SoundFile(this, "SchoolMusic.wav");
-  music[4] = new SoundFile(this, "VillageMusic.wav");
+  music[0] = new SoundFile(this, "music/Town_Night.wav");
+  music[1] = new SoundFile(this, "music/Town.wav");
+  music[2] = new SoundFile(this, "music/School.wav");
+  music[3] = new SoundFile(this, "music/Room_Night.wav");
+  music[4] = new SoundFile(this, "music/Room.wav");
   soundManager = new SoundManager(music, this);
 
   // Prepare player
   player = new Player(Utilities.loadImagePng(this, "PlayerSpriteSheet.png", 384, 49, 12, 1));
+  SoundFile[] bubbleSounds = new SoundFile[7];
+  bubbleSounds[0] = new SoundFile(this, "music/Bravery.wav");
+  bubbleSounds[1] = new SoundFile(this, "music/Sadness.wav");
+  bubbleSounds[2] = new SoundFile(this, "music/Fear.wav");
+  bubbleSounds[3] = new SoundFile(this, "music/Anger.wav");
+  bubbleSounds[4] = new SoundFile(this, "music/Love.wav");
+  bubbleSounds[5] = new SoundFile(this, "music/Peace.wav");
+  bubbleSounds[6] = new SoundFile(this, "music/Healing.wav");
+  player.setBubbleSounds(bubbleSounds);
+
   loadInteractables();
   loadTriggers();
 
@@ -272,8 +282,8 @@ void loadAssets(){
   menuBackground = Utilities.loadImagePng(this, "TitleScreen.png", width, height);
 
   // Prepare slides
-  PImage[] slides = new PImage[6];
-  for(int i = 0; i < 6; i++) slides[i] = Utilities.loadImagePng(this, "slides/D" + (i+1) + ".png", width, height);
+  PImage[] slides = new PImage[10];
+  for(int i = 0; i < 10; i++) slides[i] = Utilities.loadImagePng(this, "slides/D" + (i+1) + ".png", width, height);
   slideManager.setSlides(slides);
 
   fadeStage.accept(0);
