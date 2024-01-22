@@ -48,7 +48,7 @@ class Player {
     bubbleTime = millis();
     bubbleDuration = this.activeBubble == -1 ? 700 : 2500;
     bubbleAnimTime = millis();
-    if(this.activeBubble >= 0 && this.activeBubble < 7) bubbleSounds[this.activeBubble].play();
+    //if(this.activeBubble >= 0 && this.activeBubble < 7) bubbleSounds[this.activeBubble].play();
   }
   void setBubbleSounds(SoundFile[] sounds) {
     bubbleSounds = sounds;

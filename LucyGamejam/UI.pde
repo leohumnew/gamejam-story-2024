@@ -193,17 +193,24 @@ class FadeManager {
 }
 
 class SlideManager {
-  private PImage[] activeSlides;
+  private PImage[] activeSlides, nextSlides;
   private int slideIndex = 0, slideDuration, lastSlideTime, endStage;
   private boolean finished = false;
 
   void setSlides(PImage[] slides) {
     activeSlides = slides;
   }
+  void setNextSlides(PImage[] slides) {
+    nextSlides = slides;
+  }
+  void makeSlidesActive() {
+    activeSlides = nextSlides;
+  }
 
   void startSlides(int slideDuration, int endStage) {
     slideIndex = 0;
     this.slideDuration = slideDuration;
+    if(activeSlides.length == 1) this.slideDuration *= 3;
     this.endStage = endStage;
     lastSlideTime = millis();
     finished = false;

@@ -9,7 +9,7 @@ class SoundManager {
         globalSoundManager = new Sound(sketch);
         // Lower volume on all music tracks
         for (SoundFile track : music) {
-            track.amp(0.4f);
+            track.amp(0.5f);
         }
     }
 

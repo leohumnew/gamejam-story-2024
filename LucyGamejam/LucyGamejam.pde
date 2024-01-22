@@ -13,7 +13,7 @@ int timeOfDay = 0;
 boolean inputEnabled = true;
 FadeManager fadeManager = new FadeManager(1000);
 UIManager menuUI = new UIManager();
-UIManager debugUI = new UIManager();
+//UIManager debugUI = new UIManager();
 SlideManager slideManager = new SlideManager();
 PImage loading, menuBackground;
 PImage ui[], interactionBubbles[], bird[], extraImages[];
@@ -63,6 +63,7 @@ void settings() {
 
 void setup(){
   surface.setTitle("Lucy");
+  surface.setResizable(false);
   ((PGraphicsOpenGL)g).textureSampling(2);
   GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
   int rr = ge.getScreenDevices()[0].getDisplayMode().getRefreshRate();
@@ -85,7 +86,7 @@ void draw(){
 
   fadeManager.update(); // Update fade
   if(soundManager != null) soundManager.update(); // Update sound manager
-  debugUI.render();
+  //debugUI.render();
 }
 
 // DRAW FUNCTIONS //
@@ -135,7 +136,7 @@ Consumer<Integer> fadeStage = i -> {
 };
 Consumer<Integer> goToSlides = i -> {
   fadeManager.fade(changeStage, -3, 1000);
-  slideManager.startSlides(500, i);
+  slideManager.startSlides(2500, i);
 };
 
 // INPUT //
@@ -166,10 +167,21 @@ Consumer<PImage[]> rideBike = img -> {
 };
 Consumer<Integer> changeTimeVar = i -> {
   timeOfDay = i;
-  activeLevel.advanceTime();
+  for(int j = 0; j < LVL_NUM; j++) {
+    if(interactables[j] != null) {
+      for(Interactable interactable : interactables[j].values()) {
+        interactable.advanceTime();
+      }
+    }
+  }
 };
 Consumer<Integer> advanceTime = i -> {
   fadeManager.fade(changeTimeVar, i, 3500);
+};
+
+Consumer<Integer> showSlides = i -> {
+  slideManager.makeSlidesActive();
+  goToSlides.accept(i);
 };
 
 // LOAD ASSETS //
@@ -278,13 +290,16 @@ void loadAssets(){
 
   // Make menu UI
   menuUI.add(new ImgButton(width/2 - 27*S, height/2, 54*S, 62*S, Utilities.loadImagePng(this, "PlayButton.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonHover.png", 300, 100), Utilities.loadImagePng(this, "PlayButtonPush.png", 300, 100), goToSlides, 3));
-  debugUI.add(new FPSCounter(100,100));
+  //debugUI.add(new FPSCounter(100,100));
   menuBackground = Utilities.loadImagePng(this, "TitleScreen.png", width, height);
 
   // Prepare slides
   PImage[] slides = new PImage[10];
   for(int i = 0; i < 10; i++) slides[i] = Utilities.loadImagePng(this, "slides/D" + (i+1) + ".png", width, height);
   slideManager.setSlides(slides);
+  slides = new PImage[1];
+  slides[0] = Utilities.loadImagePng(this, "slides/EH.png", width, height);
+  slideManager.setNextSlides(slides);
 
   fadeStage.accept(0);
 }
@@ -301,24 +316,29 @@ void loadInteractables() {
   //---- Level 1: School ----//
   interactables[1] = new HashMap<Integer, Interactable>();
   interactables[1].put(1, new Interactable(new byte[][][]{ // Bench
+    {null}, // Evening 1
     {{SADNESS},{SADNESS,1},{}}, {null}, // Morning 2
     {null} // Afternoon 2
   }));
   interactables[1].put(2, new Interactable(new byte[][][]{ // Tree
+    {null}, // Evening 1
     {{},{FEAR,1},{}},{null}, // Morning 2
     {null} // Afternoon 2
   }));
   animImages = Utilities.loadImagePng(this, "SchoolInsideDoorSpriteSheet.png", 324, 48, 6, 1);
-  interactables[1].put(3, new Interactable(advanceTime, 16, animImages, new byte[][][]{ // Class door
-    {{},{FEAR,1},{4}}, {null}, // Morning 2
+  interactables[1].put(3, new Interactable(advanceTime, 17, animImages, new byte[][][]{ // Class door
+    {null}, // Evening 1
+    {{},{BRAVERY,1},{4}}, {null}, // Morning 2
     {null} // Afternoon 2
   })); 
   levelItems[1][3] = animImages[5];
   interactables[1].put(4, new Interactable(fadeStage, 1, new byte[][][]{ // Exit door
+    {null}, // Evening 1
     {{},{LOCKED,0},{}}, {null}, // Morning 2
     {{},{},{}}, {null} // Afternoon 2
   }));
   interactables[1].put(5, new Interactable(new byte[][][]{ // Football NPC
+    {null}, // Evening 1
     {null,{0}}, {null,{1}}, {{},{ANGER,1},{}}, {null}, // Morning 2
     {null} // Afternoon 2
   }));
@@ -330,28 +350,33 @@ void loadInteractables() {
   interactables[2] = new HashMap<Integer, Interactable>();
   interactables[2].put(1, new Interactable(fadeStage, 1, new byte[][][]{ // House door
     {{},{LOCKED,0},{}}, {null}, // Evening 1
-    {{},{},{}} // Morning 2
+    {{},{},{}}, {null}, // Morning 2
+    {{},{},{}}, {null} // Afternoon 2
   }));
   interactables[2].put(2, new Interactable(advanceTime, 8, new byte[][][]{ // Bed
     {{},{FEAR,0},{}}, {{},{SADNESS,1},{}}, {null}, // Evening 1
-    {null} // Morning 2
+    {null}, // Morning 2
+    {null} // Afternoon 2
   }));
   interactables[2].put(3, new Interactable(new byte[][][]{ // Desk
     {null}, // Evening 1
-    {null} // Morning 2
+    {null}, // Morning 2
+    {null} // Afternoon 2
   }));
   interactables[2].put(4, new Interactable(fadeStage, 4, new byte[][][]{ // Window
     {{LOVE},{BRAVERY,1},{}}, {null}, // Evening 1
-    {null} // Morning 2
+    {null}, // Morning 2
+    {{},{},{}}, {null} // Afternoon 2
   }));
   interactables[2].put(5, new Interactable(new byte[][][]{ // Cage
     {{},{LOVE,1, 0},{2}}, {null,{1}}, // Evening 1
-    {null,{0}} // Morning 2
+    {null,{0}}, // Morning 2
+    {null} // Afternoon 2
   }));
-  interactables[2].put(6, new Interactable(new byte[][][]{ // Kitchen door
+  interactables[2].put(6, new Interactable(showSlides, 0, new byte[][][]{ // Kitchen door
     {null}, // Evening 1
     {null}, // Morning 2
-    {null,{0}} // Afternoon 2
+    {{},{LOVE,1, 0},{}}, {null,{0}} // Afternoon 2
   }));
   PImage[] tempArray;
   arrayCopy(Utilities.loadImagePng(this, "MomSpriteSheet.png", 384, 49, 12, 1), 8, tempArray = new PImage[4], 0, 4);
@@ -359,7 +384,8 @@ void loadInteractables() {
     new Animation(tempArray, 242, 36, false)});
   interactables[2].put(7, new Interactable(new byte[][][]{ // Living room door
     {{},{FEAR,0, 0,1},{}}, {null}, // Evening 1
-    {null} // Morning 2
+    {null}, // Morning 2
+    {null} // Afternoon 2
   }));
   arrayCopy(interactionBubbles, 5, tempArray = new PImage[4], 0, 4);
   interactables[2].get(7).setSecondaryAnimations(new Animation[]{ // Parents arguing animation
@@ -372,7 +398,8 @@ void loadInteractables() {
   interactables[3].put(22, new Interactable(fadeStage, 3, null));
   interactables[3].put(21, new Interactable(new byte[][][]{ // Sitting log
     {{},{LOVE,0, 0},{}}, {null}, // Evening 1
-    {null} // Morning 2
+    {null}, // Morning 2
+    {{},{LOVE,0, 0},{}}, {null} // Afternoon 2
   }));
   interactables[3].get(21).setSecondaryAnimations(new Animation[]{ // Sitting log with Pico
     new Animation(new PImage[]{tempArray[0]}, 255, 28, false)});

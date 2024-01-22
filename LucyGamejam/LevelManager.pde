@@ -34,12 +34,6 @@ class LevelManager {
     this.npcs = npcs;
   }
 
-  public void advanceTime() {
-    for(Interactable interactable : interactables.values()) {
-      interactable.advanceTime();
-    }
-  }
-
   // Rendering the level
   public void render(int playerX) {
     this.playerX = playerX;
@@ -57,7 +51,7 @@ class LevelManager {
     }
     else if(timeOfDay >= 16 && timeOfDay < 24) {
       image(mainLayers[3], 0, 0, mainLayers[3].width*S, mainLayers[3].height*S);
-      tint(#240303);
+      tint(#8E6464);
     }
     else if(timeOfDay >= 0 || timeOfDay < 6) {
       image(mainLayers[4], 0, 0, mainLayers[4].width*S, mainLayers[4].height*S);

@@ -37,7 +37,7 @@ class Animation {
                 return;
             }
             if(offsetStartTime == 0) offsetStartTime = millis();
-            xOffsetCurrent = (int) map(millis() - offsetStartTime, 0, duration, 0, xOffsetEnd == -1 ? -(int)(x - (player.getPosX() + width/2)) : xOffsetEnd);
+            xOffsetCurrent = (int) map(millis() - offsetStartTime, 0, duration, 0, xOffsetEnd == -1 ? -(int)(x - (player.getPosX() - width/2)) : xOffsetEnd);
         }
         if(!flip) image(images[currentImage], x - playerX + xOffsetCurrent, height - y - images[0].height*S, images[0].width*S, images[0].height*S);
         else {
